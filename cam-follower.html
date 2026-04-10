@@ -2,37 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Cam & Follower Mechanism | engg-diagram</title>
 <meta name="description" content="Interactive cam and follower mechanism simulation. Sinusoidal lift profile, real-time telemetry, and HD exports.">
 <meta name="author" content="engg-diagram">
 <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png">
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}body{background:#0f1117;color:#fff;font-family:'Inter',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0f1117;color:#fff;font-family:'Inter',system-ui,sans-serif;min-height:100vh}
   nav{background:#161b22;border-bottom:2px solid #00aaff;padding:12px 18px;position:sticky;top:0;z-index:100}
   .nav-inner{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
   .logo{color:#00aaff;font-weight:800;font-size:1.15rem;margin-right:auto;letter-spacing:.5px}
   .nav-links a{color:#aab2bd;text-decoration:none;padding:6px 12px;border-radius:6px;font-size:.85rem;transition:.15s}
   .nav-links a:hover,.nav-links a.active{background:#00aaff18;color:#00aaff}
   header{padding:24px 18px 16px;text-align:center;background:linear-gradient(180deg,#111827 0%,#0f1117 100%)}
-  header h1{color:#00aaff;font-size:1.6rem;font-weight:700;margin-bottom:6px}header span{color:#8899a6;font-size:.9rem}
+  header h1{color:#00aaff;font-size:1.6rem;font-weight:700;margin-bottom:6px}
+  header span{color:#8899a6;font-size:.9rem}
   .container{max-width:960px;margin:0 auto;padding:0 16px 40px}
   .card{background:#161b22;border:1px solid #252d3a;border-radius:14px;padding:20px;margin-bottom:24px;box-shadow:0 4px 12px #0004}
   .card h2{color:#00aaff;font-size:1.15rem;margin-bottom:6px;font-weight:600}
   .card p{color:#8b949e;font-size:.85rem;margin-bottom:16px;line-height:1.5}
-  .canvas-wrap{width:100%;overflow:hidden;border-radius:10px;border:1px solid #252d3a;background:#0d1117;position:relative;touch-action:none;user-select:none}
-  canvas{display:block;transform-origin:center center;transition:transform .1s ease-out;image-rendering:auto;cursor:grab}canvas:active{cursor:grabbing}
-  .zoom-hint{position:absolute;bottom:8px;right:10px;background:#000b;color:#8b949e;font-size:.7rem;padding:4px 8px;border-radius:4px;pointer-events:none}
-  .controls{display:flex;flex-direction:column;gap:12px;margin-top:18px}.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+  .canvas-wrap{width:100%;overflow:hidden;border-radius:10px;border:1px solid #252d3a;background:#0d1117;position:relative;touch-action:pan-y}
+  canvas{display:block;width:100%;height:auto;image-rendering:auto}
+  .controls{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
   button{flex:1;min-width:90px;background:linear-gradient(135deg,#00aaff,#0088dd);color:#000;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.85rem;transition:.15s;box-shadow:0 2px 4px #00aaff33}
-  button:hover{background:linear-gradient(135deg,#00b8ff,#0095ee);transform:translateY(-1px)}button:active{transform:scale(.98)}
-  .btn-outline{background:transparent;border:1.5px solid #00aaff;color:#00aaff;box-shadow:none}.btn-outline:hover{background:#00aaff18}
+  button:hover{background:linear-gradient(135deg,#00b8ff,#0095ee);transform:translateY(-1px)}
+  button:active{transform:scale(.98)}
+  .btn-outline{background:transparent;border:1.5px solid #00aaff;color:#00aaff;box-shadow:none}
+  .btn-outline:hover{background:#00aaff18}
   .slider-row{display:flex;align-items:center;gap:10px;background:#0d1117;padding:10px 12px;border-radius:8px;border:1px solid #252d3a}
   input[type=range]{-webkit-appearance:none;flex:1;height:6px;background:#252d3a;border-radius:3px;outline:none}
   input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:#00aaff;border-radius:50%;cursor:pointer;box-shadow:0 0 8px #00aaff66}
   .speed-val{color:#00aaff;font-weight:700;min-width:36px;text-align:right;font-size:.9rem;font-family:monospace}
-  .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}@media(min-width:500px){.info-grid{grid-template-columns:repeat(4,1fr)}}
-  .info-box{background:#0d1117;border:1px solid #252d3a;border-radius:8px;padding:10px 6px;text-align:center}.info-box .val{font-size:1.2rem;font-weight:700;color:#00aaff;font-family:monospace}.info-box .lbl{font-size:.68rem;color:#6e7681;margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+  .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+  @media(min-width:500px){.info-grid{grid-template-columns:repeat(4,1fr)}}
+  .info-box{background:#0d1117;border:1px solid #252d3a;border-radius:8px;padding:10px 6px;text-align:center}
+  .info-box .val{font-size:1.2rem;font-weight:700;color:#00aaff;font-family:monospace}
+  .info-box .lbl{font-size:.68rem;color:#6e7681;margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
   footer{text-align:center;color:#484f58;font-size:.8rem;padding:30px 16px;border-top:1px solid #21262d;margin-top:20px}
   .quality-badge{display:inline-block;background:#0d2a0d;color:#4caf50;border:1px solid #2a4a2a;border-radius:6px;font-size:.72rem;padding:3px 8px;margin-left:10px;vertical-align:middle;font-weight:600}
   @media(max-width:600px){.nav-inner{flex-direction:column;align-items:flex-start}.btn-row{flex-direction:column}button{min-width:100%}}
@@ -58,14 +65,18 @@
   <div class="card">
     <h2>⚙️ Cam & Roller Follower <span class="quality-badge">⬇ 4K HD</span></h2>
     <p>Rotating cam with a simple-harmonic displacement curve drives a vertical roller follower. Observe lift, velocity, and contact dynamics.</p>
-    <div class="canvas-wrap" id="camWrap"><canvas id="camCanvas"></canvas><div class="zoom-hint">💡 Pinch/Scroll zoom · Double-tap reset</div></div>
+    <div class="canvas-wrap" id="camWrap"><canvas id="camCanvas"></canvas></div>
     <div class="controls">
       <div class="btn-row">
         <button id="camPlayBtn" onclick="toggleCam()">⏸ Pause</button>
         <button id="camDirBtn" class="btn-outline" onclick="toggleCamDir()">🔄 CW</button>
         <button class="btn-outline" onclick="downloadCam()">⬇ PNG</button>
       </div>
-      <div class="slider-row"><label style="color:#8b949e;font-size:.88rem;white-space:nowrap;">Speed:</label><input type="range" id="camSpeed" min="1" max="10" value="3" oninput="setCamSpeed(this.value)"><span class="speed-val" id="camSpeedLbl">3x</span></div>
+      <div class="slider-row">
+        <label style="color:#8b949e;font-size:.88rem;white-space:nowrap;">Speed:</label>
+        <input type="range" id="camSpeed" min="1" max="10" value="3" oninput="setCamSpeed(this.value)">
+        <span class="speed-val" id="camSpeedLbl">3x</span>
+      </div>
     </div>
     <div class="info-grid">
       <div class="info-box"><div class="val" id="cTheta">0°</div><div class="lbl">Cam Angle</div></div>
@@ -82,94 +93,145 @@
 </footer>
 
 <script>
-/* === ZOOM (PINCH + SCROLL) === */
-function initZoom(wrapId,canvasId){
-  const w=document.getElementById(wrapId),c=document.getElementById(canvasId);
-  let s=1,ig=false,sx,sy,px=0,py=0,id=0,ist=0,lt=0;
-  const up=()=>{c.style.transform=`translate(${px}px,${py}px) scale(${s})`;};
-  w.addEventListener('wheel',e=>{e.preventDefault();s=Math.min(Math.max(.4,s+(-e.deltaY*.002)),4);up();},{passive:false});
-  w.addEventListener('touchstart',e=>{if(e.touches.length===2){e.preventDefault();id=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);ist=s;}if(e.touches.length===1){ig=true;sx=e.touches[0].clientX-px;sy=e.touches[0].clientY-py;}},{passive:false});
-  w.addEventListener('touchmove',e=>{if(e.touches.length===2){e.preventDefault();s=Math.min(Math.max(.4,ist*(Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY)/id)),4);up();}if(e.touches.length===1&&ig){e.preventDefault();px=e.touches[0].clientX-sx;py=e.touches[0].clientY-sy;up();}},{passive:false});
-  w.addEventListener('touchend',e=>{ig=false;if(Date.now()-lt<280){s=1;px=0;py=0;up();}lt=Date.now();});
-  w.addEventListener('dblclick',()=>{s=1;px=0;py=0;up();});
+/* === CAM & FOLLOWER MECHANISM (Optimized) === */
+const cv = document.getElementById('camCanvas'),
+      ctx = cv.getContext('2d'),
+      CW = 780, CH = 320, DPR = window.devicePixelRatio || 1;
+
+// Responsive canvas sizing
+function resizeCanvas() {
+  const wrap = document.getElementById('camWrap');
+  cv.width = wrap.clientWidth * DPR;
+  cv.height = (wrap.clientWidth * CH / CW) * DPR;
+  ctx.scale(DPR, DPR);
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// Simulation state
+let cA = 0, cS = 3, cDir = 1, cRun = true, cId;
+const RB = 55, LIFT = 40, RF = 12, CX = 250, CY = 220, FX = 310;
+
+// Controls
+function toggleCam() {
+  cRun = !cRun;
+  document.getElementById('camPlayBtn').textContent = cRun ? '⏸ Pause' : '▶ Play';
+  cRun ? runCam() : cancelAnimationFrame(cId);
+}
+function toggleCamDir() {
+  cDir *= -1;
+  document.getElementById('camDirBtn').textContent = cDir === 1 ? '🔄 CW' : '🔄 CCW';
+}
+function setCamSpeed(v) {
+  cS = +v;
+  document.getElementById('camSpeedLbl').textContent = v + 'x';
 }
 
-/* === CAM & FOLLOWER MECHANISM === */
-const cv=document.getElementById('camCanvas'),ctx=cv.getContext('2d');
-const CW=780,CH=320,DPR=window.devicePixelRatio||1,HQ=4;
-cv.width=CW*DPR;cv.height=CH*DPR;ctx.scale(DPR,DPR);
-let cA=0,cS=3,cDir=1,cRun=true,cId;
-const RB=55, LIFT=40, RF=12, CX=250, CY=220, FX=310, FY=80; // Base circle, max lift, follower roller radius, cam center, follower start
-
-function toggleCam(){cRun=!cRun;document.getElementById('camPlayBtn').textContent=cRun?'⏸ Pause':'▶ Play';cRun?runCam():cancelAnimationFrame(cId);}
-function toggleCamDir(){cDir*=-1;document.getElementById('camDirBtn').textContent=cDir===1?'🔄 CW':'🔄 CCW';}
-function setCamSpeed(v){cS=parseInt(v);document.getElementById('camSpeedLbl').textContent=v+'x';}
-
-function camLift(theta){
-  const t=((theta%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
-  const half=Math.PI;
-  if(t<half) return (LIFT/2)*(1-Math.cos(Math.PI*t/half)); // Simple harmonic rise
-  if(t<Math.PI*1.5) return LIFT; // Dwell
-  return (LIFT/2)*(1+Math.cos(Math.PI*(t-Math.PI*1.5)/half)); // Return
+// Simple harmonic motion profile
+function camLift(theta) {
+  const t = theta % (Math.PI * 2);
+  if (t < Math.PI) return (LIFT / 2) * (1 - Math.cos(t));           // Rise (0–π)
+  if (t < Math.PI * 1.5) return LIFT;                                // Dwell (π–1.5π)
+  return (LIFT / 2) * (1 + Math.cos(t - Math.PI * 1.5));            // Return (1.5π–2π)
 }
 
-function drawCam(c,angle,w=false){
-  c.clearRect(0,0,CW,CH);c.fillStyle=w?'#fff':'#0d1117';c.fillRect(0,0,CW,CH);
-  c.strokeStyle=w?'#e5e7eb':'#1a2030';c.lineWidth=1;for(let x=0;x<CW;x+=30){c.beginPath();c.moveTo(x,0);c.lineTo(x,CH);c.stroke();}for(let y=0;y<CH;y+=30){c.beginPath();c.moveTo(0,y);c.lineTo(CW,y);c.stroke();}
+// Optimized draw function
+function drawCam(c, angle, hd = false) {
+  const W = hd ? CW * 4 : CW, H = hd ? CH * 4 : CH;
+  const scale = hd ? 4 : 1;
   
-  const lift=camLift(angle);
-  const fy=CY-RB-lift-RF; // Follower roller center Y
-  const vel=(cS*0.01*cDir)*(LIFT/2)*Math.PI/Math.PI*Math.sin(angle%(Math.PI)); // Approx velocity for display
+  // Clear & background
+  c.fillStyle = hd ? '#fff' : '#0d1117';
+  c.fillRect(0, 0, W, H);
+  
+  // Subtle grid (only in HD export)
+  if (hd) {
+    c.strokeStyle = '#e5e7eb'; c.lineWidth = 1;
+    for (let x = 0; x < W; x += 30) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, H); c.stroke(); }
+    for (let y = 0; y < H; y += 30) { c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
+  }
+  
+  const lift = camLift(angle);
+  const fy = CY - RB - lift - RF;
+  const vel = cS * 0.01 * cDir * (LIFT / 2) * Math.sin(angle % Math.PI);
   
   // Guide rails
-  c.strokeStyle=w?'#9ca3af':'#4b5563';c.lineWidth=4;
-  c.beginPath();c.moveTo(FX-15,20);c.lineTo(FX-15,CH);c.stroke();
-  c.beginPath();c.moveTo(FX+15,20);c.lineTo(FX+15,CH);c.stroke();
+  c.strokeStyle = hd ? '#9ca3af' : '#4b5563'; c.lineWidth = 4 * scale;
+  c.beginPath(); c.moveTo(FX * scale - 15 * scale, 20 * scale); c.lineTo(FX * scale - 15 * scale, H); c.stroke();
+  c.beginPath(); c.moveTo(FX * scale + 15 * scale, 20 * scale); c.lineTo(FX * scale + 15 * scale, H); c.stroke();
   
   // Follower stem
-  c.fillStyle=w?'#d1d5db':'#6b7280';
-  c.fillRect(FX-6,fy,12,CY-RB-lift-RF-fy+RB+lift);
+  c.fillStyle = hd ? '#d1d5db' : '#6b7280';
+  c.fillRect((FX - 6) * scale, fy * scale, 12 * scale, (CY - RB - lift - RF - fy + RB + lift) * scale);
   
   // Follower roller
-  c.beginPath();c.arc(FX,fy,RF,0,Math.PI*2);c.fillStyle=w?'#9ca3af':'#8b949e';c.fill();c.strokeStyle=w?'#4b5563':'#374151';c.lineWidth=2;c.stroke();
+  c.beginPath(); c.arc(FX * scale, fy * scale, RF * scale, 0, Math.PI * 2);
+  c.fillStyle = hd ? '#9ca3af' : '#8b949e'; c.fill();
+  c.strokeStyle = hd ? '#4b5563' : '#374151'; c.lineWidth = 2 * scale; c.stroke();
   
-  // Cam profile (approximated with 60 segments for smoothness)
+  // Cam profile (48 segments = smooth + performant)
   c.beginPath();
-  for(let i=0;i<=60;i++){
-    const th=(i/60)*Math.PI*2;
-    const r=RB+camLift(th+angle); // Note: lift is pre-rotated
-    const px=CX+r*Math.cos(th);
-    const py=CY+r*Math.sin(th);
-    i===0?c.moveTo(px,py):c.lineTo(px,py);
+  for (let i = 0; i <= 48; i++) {
+    const th = (i / 48) * Math.PI * 2;
+    const r = RB + camLift(th + angle);
+    const px = CX * scale + r * scale * Math.cos(th);
+    const py = CY * scale + r * scale * Math.sin(th);
+    i === 0 ? c.moveTo(px, py) : c.lineTo(px, py);
   }
-  c.closePath();c.fillStyle=w?'#f3f4f6':'#111827';c.fill();c.strokeStyle=w?'#d1d5db':'#4b5563';c.lineWidth=2;c.stroke();
+  c.closePath();
+  c.fillStyle = hd ? '#f3f4f6' : '#111827'; c.fill();
+  c.strokeStyle = hd ? '#d1d5db' : '#4b5563'; c.lineWidth = 2 * scale; c.stroke();
   
   // Base circle (dashed)
-  c.beginPath();c.arc(CX,CY,RB,0,Math.PI*2);c.strokeStyle=w?'#9ca3af':'#2e4055';c.lineWidth=1;c.setLineDash([4,4]);c.stroke();c.setLineDash([]);
+  c.beginPath(); c.arc(CX * scale, CY * scale, RB * scale, 0, Math.PI * 2);
+  c.strokeStyle = hd ? '#9ca3af' : '#2e4055'; c.lineWidth = 1 * scale;
+  c.setLineDash([4 * scale, 4 * scale]); c.stroke(); c.setLineDash([]);
   
   // Cam center & shaft
-  c.beginPath();c.arc(CX,CY,8,0,Math.PI*2);c.fillStyle=w?'#e5e7eb':'#1a1a2e';c.fill();c.strokeStyle=w?'#0369a1':'#00aaff';c.lineWidth=2.5;c.stroke();
+  c.beginPath(); c.arc(CX * scale, CY * scale, 8 * scale, 0, Math.PI * 2);
+  c.fillStyle = hd ? '#e5e7eb' : '#1a1a2e'; c.fill();
+  c.strokeStyle = hd ? '#0369a1' : '#00aaff'; c.lineWidth = 2.5 * scale; c.stroke();
   
-  // Contact point indicator
-  c.beginPath();c.arc(FX,fy+RF,3,0,Math.PI*2);c.fillStyle=w?'#dc2626':'#ff5577';c.fill();
+  // Contact point
+  c.beginPath(); c.arc(FX * scale, (fy + RF) * scale, 3 * scale, 0, Math.PI * 2);
+  c.fillStyle = hd ? '#dc2626' : '#ff5577'; c.fill();
   
-  // Labels
-  c.font='bold 11px Arial';c.fillStyle=w?'#374151':'#00aaff';c.fillText('Cam',CX-18,CY+28);c.fillStyle=w?'#92400e':'#e8a020';c.fillText('Follower',FX+20,fy-10);c.fillStyle=w?'#b91c1c':'#ff5577';c.fillText('Contact',FX+18,fy+RF+14);
+  // Labels (only HD)
+  if (hd) {
+    c.font = `bold ${13 * scale}px Arial`;
+    c.fillStyle = '#111827'; c.globalAlpha = 0.8;
+    c.fillText('⚙️ Cam & Follower | engg-diagram', 16 * scale, H - 12 * scale);
+    c.globalAlpha = 1;
+  }
   
-  // Telemetry update
-  const deg=((angle*180/Math.PI)%360+360)%360;
-  document.getElementById('cTheta').textContent=deg.toFixed(0)+'°';
-  document.getElementById('cLift').textContent=lift.toFixed(1)+' px';
-  document.getElementById('cVel').textContent=Math.abs(vel*LIFT).toFixed(1)+' px/s';
-  const norm=((angle%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
-  document.getElementById('cPhase').textContent=norm<Math.PI?'Rise':norm<Math.PI*1.5?'Dwell':'Return';
+  // Telemetry updates
+  const deg = ((angle * 180 / Math.PI) % 360 + 360) % 360;
+  document.getElementById('cTheta').textContent = deg.toFixed(0) + '°';
+  document.getElementById('cLift').textContent = lift.toFixed(1) + ' px';
+  document.getElementById('cVel').textContent = Math.abs(vel * 100).toFixed(1) + ' px/s';
+  const norm = angle % (Math.PI * 2);
+  document.getElementById('cPhase').textContent = norm < Math.PI ? 'Rise' : norm < Math.PI * 1.5 ? 'Dwell' : 'Return';
 }
 
-function runCam(){cA+=0.01*cS*cDir;drawCam(ctx,cA);cId=requestAnimationFrame(runCam);}
+// Animation loop
+function runCam() {
+  cA += 0.01 * cS * cDir;
+  drawCam(ctx, cA);
+  cId = requestAnimationFrame(runCam);
+}
 runCam();
-function downloadCam(){const off=document.createElement('canvas');off.width=CW*HQ;off.height=CH*HQ;const c=off.getContext('2d');c.scale(HQ,HQ);drawCam(c,cA,true);c.font='bold 13px Arial';c.fillStyle='#111827';c.globalAlpha=0.8;c.fillText('⚙️ Cam & Follower | engg-diagram | engg-diagrams.github.io',16,CH-12);const a=document.createElement('a');a.download='cam-follower-hd.png';a.href=off.toDataURL('image/png');a.click();}
 
-initZoom('camWrap','camCanvas');
+// HD Export
+function downloadCam() {
+  const off = document.createElement('canvas');
+  off.width = CW * 4; off.height = CH * 4;
+  const c = off.getContext('2d');
+  drawCam(c, cA, true);
+  const a = document.createElement('a');
+  a.download = 'cam-follower-hd.png';
+  a.href = off.toDataURL('image/png');
+  a.click();
+}
 </script>
 </body>
 </html>
