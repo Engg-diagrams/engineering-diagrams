@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Engineering Mechanisms</title>
+<title>Engineering Mechanisms | engg-diagram</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: #0f1117; color: #fff; font-family: Arial, sans-serif; min-height: 100vh; }
@@ -22,8 +22,9 @@
   .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
   .card h2 { color: #00aaff; font-size: 1.05rem; margin-bottom: 4px; }
   .card p { color: #8b949e; font-size: 0.82rem; margin-bottom: 14px; line-height: 1.5; }
-  .canvas-wrap { width: 100%; overflow: auto; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; display: flex; justify-content: center; align-items: flex-start; }
-  canvas { display: block; transform-origin: center center; transition: transform 0.2s ease; image-rendering: auto; }
+  .canvas-wrap { width: 100%; overflow: hidden; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; position: relative; touch-action: none; }
+  canvas { display: block; transform-origin: center center; transition: transform 0.1s ease-out; image-rendering: auto; }
+  .zoom-hint { position: absolute; bottom: 8px; right: 10px; background: #0009; color: #aaa; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; pointer-events: none; }
   .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
   .slider-row { display: flex; align-items: center; gap: 10px; width: 100%; }
   input[type=range] { -webkit-appearance: none; flex: 1; height: 8px; background: #30363d; border-radius: 4px; outline: none; }
@@ -34,8 +35,6 @@
   button:active { background: #0077bb; }
   .btn-outline { background: transparent; border: 1.5px solid #00aaff; color: #00aaff; }
   .btn-outline:active { background: #00aaff22; }
-  .zoom-row { display: flex; gap: 8px; width: 100%; margin-top: 10px; align-items: center; }
-  .zoom-btn { min-width: 40px; padding: 8px; font-size: 1.1rem; }
   .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; }
   @media (min-width: 500px) { .info-grid { grid-template-columns: repeat(4, 1fr); } }
   .info-box { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 12px 8px; text-align: center; }
@@ -64,7 +63,7 @@
 
 <header>
   <h1>Engineering Mechanisms</h1>
-  <span>Interactive diagrams by engg-diagrams</span>
+  <span>Interactive diagrams by engg-diagram</span>
 </header>
 
 <div class="container">
@@ -74,7 +73,10 @@
     <div class="card">
       <h2>🔩 Piston – Crank Mechanism <span class="quality-badge">⬇ 4K PNG</span></h2>
       <p>Rotating crank drives a piston in reciprocating motion. Fixed cylinder walls with engineering hatch marks.</p>
-      <div class="canvas-wrap"><canvas id="pistonCanvas"></canvas></div>
+      <div class="canvas-wrap" id="pistonWrap">
+        <canvas id="pistonCanvas"></canvas>
+        <div class="zoom-hint">💡 Pinch/Scroll to zoom · Double-tap to reset</div>
+      </div>
       <div class="controls">
         <div class="btn-row">
           <button id="pistonPlayBtn" onclick="togglePiston()">⏸ Pause</button>
@@ -85,13 +87,6 @@
           <label>Speed:</label>
           <input type="range" id="pistonSpeed" min="1" max="10" value="4" oninput="setPistonSpeed(this.value)">
           <span class="speed-val" id="pistonSpeedLbl">4x</span>
-        </div>
-        <div class="zoom-row">
-          <label style="color:#aaa; margin-right:6px;">Zoom:</label>
-          <button class="btn-outline zoom-btn" onclick="zoomCanvas('pistonCanvas', -0.2)">−</button>
-          <span id="pistonZoomLbl" style="color:#00aaff; min-width:40px; text-align:center;">1.0x</span>
-          <button class="btn-outline zoom-btn" onclick="zoomCanvas('pistonCanvas', 0.2)">+</button>
-          <button class="btn-outline" style="margin-left:auto; min-width:60px;" onclick="resetZoom('pistonCanvas')">Reset</button>
         </div>
       </div>
       <div class="info-grid">
@@ -108,7 +103,10 @@
     <div class="card">
       <h2>🔗 Four-Bar Linkage <span class="quality-badge">⬇ 4K PNG</span></h2>
       <p>Grashof-compliant planar mechanism. Input crank drives rocker through coupler link. Trace coupler curve.</p>
-      <div class="canvas-wrap"><canvas id="fourbarCanvas"></canvas></div>
+      <div class="canvas-wrap" id="fourbarWrap">
+        <canvas id="fourbarCanvas"></canvas>
+        <div class="zoom-hint">💡 Pinch/Scroll to zoom · Double-tap to reset</div>
+      </div>
       <div class="controls">
         <div class="btn-row">
           <button id="fourbarPlayBtn" onclick="toggleFourbar()">⏸ Pause</button>
@@ -119,13 +117,6 @@
           <label>Speed:</label>
           <input type="range" id="fourbarSpeed" min="1" max="10" value="3" oninput="setFourbarSpeed(this.value)">
           <span class="speed-val" id="fourbarSpeedLbl">3x</span>
-        </div>
-        <div class="zoom-row">
-          <label style="color:#aaa; margin-right:6px;">Zoom:</label>
-          <button class="btn-outline zoom-btn" onclick="zoomCanvas('fourbarCanvas', -0.2)">−</button>
-          <span id="fourbarZoomLbl" style="color:#00aaff; min-width:40px; text-align:center;">1.0x</span>
-          <button class="btn-outline zoom-btn" onclick="zoomCanvas('fourbarCanvas', 0.2)">+</button>
-          <button class="btn-outline" style="margin-left:auto; min-width:60px;" onclick="resetZoom('fourbarCanvas')">Reset</button>
         </div>
       </div>
       <div class="info-grid">
@@ -147,12 +138,10 @@ const sections = document.querySelectorAll('.mechanism-section');
 const navLinks = document.querySelectorAll('.nav-links a');
 const search = document.getElementById('searchInput');
 function show(id){
-  sections.forEach(s=>{
-    s.classList.toggle('active', id==='all'||s.id===id||s.dataset.tags.includes(id));
-  });
-  navLinks.forEach(l=>{l.classList.toggle('active', l.dataset.filter===id);});
+  sections.forEach(s=>{ s.classList.toggle('active', id==='all'||s.id===id||s.dataset.tags.includes(id)); });
+  navLinks.forEach(l=>{ l.classList.toggle('active', l.dataset.filter===id); });
 }
-navLinks.forEach(l=>{l.onclick=e=>{e.preventDefault(); show(l.dataset.filter); search.value='';}});
+navLinks.forEach(l=>{ l.onclick=e=>{ e.preventDefault(); show(l.dataset.filter); search.value=''; }; });
 search.oninput=e=>{
   const q=e.target.value.toLowerCase();
   if(!q) return show('all');
@@ -164,17 +153,53 @@ search.oninput=e=>{
 };
 show('piston');
 
-/* === ZOOM UTILS === */
-let zoomLevels = {pistonCanvas:1, fourbarCanvas:1};
-function zoomCanvas(id, delta){
-  const c = document.getElementById(id);
-  zoomLevels[id] = Math.max(0.4, Math.min(3, zoomLevels[id] + delta));
-  c.style.transform = `scale(${zoomLevels[id]})`;
-  document.getElementById(id.replace('Canvas','')+'ZoomLbl').textContent = zoomLevels[id].toFixed(1)+'x';
-}
-function resetZoom(id){
-  zoomLevels[id]=1; document.getElementById(id).style.transform='scale(1)';
-  document.getElementById(id.replace('Canvas','')+'ZoomLbl').textContent='1.0x';
+/* === PINCH & SCROLL ZOOM === */
+function initZoom(wrapId, canvasId){
+  const wrap = document.getElementById(wrapId);
+  const canvas = document.getElementById(canvasId);
+  let scale = 1;
+  let initDist = 0, initScale = 1;
+  
+  // Desktop scroll
+  wrap.addEventListener('wheel', e=>{
+    e.preventDefault();
+    const delta = e.deltaY * -0.0015;
+    scale = Math.min(Math.max(0.5, scale + delta), 3);
+    canvas.style.transform = `scale(${scale})`;
+  }, { passive: false });
+
+  // Mobile pinch start
+  wrap.addEventListener('touchstart', e=>{
+    if(e.touches.length === 2){
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      initDist = Math.hypot(dx, dy);
+      initScale = scale;
+    }
+  }, { passive: false });
+
+  // Mobile pinch move
+  wrap.addEventListener('touchmove', e=>{
+    if(e.touches.length === 2){
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.hypot(dx, dy);
+      scale = Math.min(Math.max(0.5, initScale * (dist / initDist)), 3);
+      canvas.style.transform = `scale(${scale})`;
+    }
+  }, { passive: false });
+
+  // Reset on double-click/tap
+  const resetZoom = ()=>{ scale = 1; canvas.style.transform = 'scale(1)'; };
+  wrap.addEventListener('dblclick', resetZoom);
+  let lastTap = 0;
+  wrap.addEventListener('touchend', e=>{
+    const now = Date.now();
+    if(now - lastTap < 300 && e.changedTouches.length === 1) resetZoom();
+    lastTap = now;
+  });
 }
 
 /* === PISTON-CRANK === */
@@ -185,55 +210,54 @@ let pA=0, pS=4, pDir=1, pRun=true, pId;
 const CX=185, CY=160, R=65, L=150;
 const CT=CY-36, CB=CY+36, CL=CX+R+10, CR=CX+R+L+60, PW2=38, PH2=64;
 
-function togglePiston(){pRun=!pRun; document.getElementById('pistonPlayBtn').textContent=pRun?'⏸ Pause':'▶ Play'; pRun?runPiston():cancelAnimationFrame(pId);}
-function togglePistonDir(){pDir*=-1; document.getElementById('pistonDirBtn').textContent=pDir===1?'🔄 CW':'🔄 CCW';}
-function setPistonSpeed(v){pS=+v; document.getElementById('pistonSpeedLbl').textContent=v+'x'; document.getElementById('pRPM').textContent=(v*30).toFixed(0);}
+function togglePiston(){ pRun=!pRun; document.getElementById('pistonPlayBtn').textContent=pRun?'⏸ Pause':'▶ Play'; pRun?runPiston():cancelAnimationFrame(pId); }
+function togglePistonDir(){ pDir*=-1; document.getElementById('pistonDirBtn').textContent=pDir===1?'🔄 CW':'🔄 CCW'; }
+function setPistonSpeed(v){ pS=+v; document.getElementById('pistonSpeedLbl').textContent=v+'x'; document.getElementById('pRPM').textContent=(v*30).toFixed(0); }
 
 function drawPiston(c,a,whiteBg=false){
   c.clearRect(0,0,PW,PH);
-  // Background
-  c.fillStyle = whiteBg ? '#ffffff' : '#0d1117';
-  c.fillRect(0,0,PW,PH);
-  // Grid
+  c.fillStyle = whiteBg ? '#ffffff' : '#0d1117'; c.fillRect(0,0,PW,PH);
   c.strokeStyle = whiteBg ? '#e8e8e8' : '#1a2030'; c.lineWidth=1;
   for(let x=0;x<PW;x+=30){c.beginPath();c.moveTo(x,0);c.lineTo(x,PH);c.stroke();}
   for(let y=0;y<PH;y+=30){c.beginPath();c.moveTo(0,y);c.lineTo(PW,y);c.stroke();}
+  
   const cpX=CX+R*Math.cos(a), cpY=CY+R*Math.sin(a), dy=cpY-CY;
   const pX=cpX+Math.sqrt(Math.max(0, L*L-dy*dy)), pY=CY;
-  // Cylinder
+  
   c.fillStyle = whiteBg ? '#f4f4f4' : '#0d1520'; c.fillRect(CL,CT+4,CR-CL,CB-CT-8);
   c.fillStyle = whiteBg ? '#d0d5db' : '#1e2d3d'; 
   c.fillRect(CL,CT-14,CR-CL+12,14); c.fillRect(CL,CB,CR-CL+12,14); c.fillRect(CR,CT-14,14,CB-CT+28);
   c.strokeStyle = whiteBg ? '#b0b5bb' : '#2e4055'; c.lineWidth=1;
   for(let i=0;i<=28;i++){c.beginPath();c.moveTo(CL+i*14,CT-1);c.lineTo(CL+i*14-10,CT-12);c.stroke();}
   for(let i=0;i<=28;i++){c.beginPath();c.moveTo(CL+i*14,CB+1);c.lineTo(CL+i*14-10,CB+12);c.stroke();}
+  
   c.strokeStyle = whiteBg ? '#555' : '#6a8aa0'; c.lineWidth=3;
   c.beginPath();c.moveTo(CL,CT);c.lineTo(CR+14,CT);c.stroke();
   c.beginPath();c.moveTo(CL,CB);c.lineTo(CR+14,CB);c.stroke();
   c.beginPath();c.moveTo(CR,CT-14);c.lineTo(CR,CB+14);c.stroke();
-  // Crank guide
+  
   c.beginPath();c.arc(CX,CY,R,0,Math.PI*2);c.strokeStyle= whiteBg ? '#ccc' : '#1e3a5f';c.lineWidth=1.5;c.setLineDash([4,4]);c.stroke();c.setLineDash([]);
-  // Rods
   c.lineCap='round';
   c.beginPath();c.moveTo(cpX,cpY);c.lineTo(pX,pY);c.strokeStyle= whiteBg ? '#d48c00' : '#e8a020';c.lineWidth=5;c.stroke();
   c.beginPath();c.moveTo(CX,CY);c.lineTo(cpX,cpY);c.strokeStyle= whiteBg ? '#0066aa' : '#00aaff';c.lineWidth=7;c.stroke();
-  // Piston
+  
   c.fillStyle= whiteBg ? '#2a5080' : '#2a5080'; c.strokeStyle= whiteBg ? '#1a3050' : '#4a9fdf'; c.lineWidth=2;
   c.beginPath();c.roundRect(pX-PW2/2,pY-PH2/2,PW2,PH2,4);c.fill();c.stroke();
   [-16,0,16].forEach(o=>{c.beginPath();c.moveTo(pX-PW2/2+3,pY+o);c.lineTo(pX+PW2/2-3,pY+o);c.strokeStyle= whiteBg ? '#1a3050' : '#1a3a5a';c.lineWidth=2.5;c.stroke();});
   c.beginPath();c.arc(pX,pY,5,0,Math.PI*2);c.fillStyle= whiteBg ? '#666' : '#aaa';c.fill();
-  // Pins
+  
   c.beginPath();c.arc(CX,CY,11,0,Math.PI*2);c.fillStyle= whiteBg ? '#e0e0e0' : '#1a1a2e';c.fill();c.strokeStyle= whiteBg ? '#0066aa' : '#00aaff';c.lineWidth=2.5;c.stroke();
   c.beginPath();c.arc(cpX,cpY,8,0,Math.PI*2);c.fillStyle= whiteBg ? '#d48c00' : '#e8a020';c.fill();c.strokeStyle= whiteBg ? '#fff' : '#fff4';c.lineWidth=1;c.stroke();
-  // Axis
+  
   c.beginPath();c.moveTo(CX-25,CY);c.lineTo(CR+20,CY);c.strokeStyle= whiteBg ? '#aaa' : '#2a3a4a';c.lineWidth=1;c.setLineDash([5,5]);c.stroke();c.setLineDash([]);
-  // Labels
+  
   c.font='bold 11px Arial';
   c.fillStyle= whiteBg ? '#333' : '#00aaff'; c.fillText('Crank',CX-20,CY+28);
   c.fillStyle= whiteBg ? '#885500' : '#e8a020'; c.fillText('Con. Rod',(cpX+pX)/2-26,(cpY+pY)/2-10);
   c.fillStyle= whiteBg ? '#004488' : '#7ab8e8'; c.fillText('Piston',pX-14,CB+28);
   c.fillStyle= whiteBg ? '#666' : '#6a8aa0'; c.fillText('Cylinder',CL+8,CT-18);
 }
+
 function updatePiston(){
   const deg=((pA*180/Math.PI)%360+360)%360, dy=R*Math.sin(pA);
   const pX=CX+R*Math.cos(pA)+Math.sqrt(Math.max(0, L*L-dy*dy)), maxX=CX+R+L;
@@ -241,41 +265,43 @@ function updatePiston(){
   document.getElementById('pStroke').textContent=(maxX-pX).toFixed(0)+' px';
   document.getElementById('pPos').textContent=deg<10||deg>350?'TDC':deg>170&&deg<190?'BDC':deg<180?'Power ↓':'Return ↑';
 }
-function runPiston(){pA+=0.01*pS*pDir; drawPiston(pctx,pA); updatePiston(); pId=requestAnimationFrame(runPiston);}
+
+function runPiston(){ pA+=0.01*pS*pDir; drawPiston(pctx,pA); updatePiston(); pId=requestAnimationFrame(runPiston); }
 runPiston();
+
 function downloadPiston(){
   const off=document.createElement('canvas'); off.width=PW*DQ; off.height=PH*DQ;
   const c=off.getContext('2d'); c.scale(DQ,DQ);
   drawPiston(c,pA,true);
   c.font='bold 12px Arial'; c.fillStyle='#222222'; c.globalAlpha=0.7;
-  c.fillText('⚙️ Piston–Crank · engg-diagrams.github.io', 16, PH-14);
+  c.fillText('⚙️ Piston–Crank · engg-diagrams.github.io | engg-diagram', 16, PH-14);
   const a=document.createElement('a'); a.download='piston-crank-HD.png'; a.href=off.toDataURL('image/png'); a.click();
 }
 
-/* === 4-BAR LINKAGE (RIGID LINKS) === */
+/* === 4-BAR LINKAGE (RIGID) === */
 const fb=document.getElementById('fourbarCanvas'), fctx=fb.getContext('2d');
 fb.width=PW*DS; fb.height=PH*DS; fctx.scale(DS,DS);
 let fA=0, fS=3, fDir=1, fRun=true, fId, fTrace=[];
-const G=160, a=60, b=140, c=100; // Ground, Crank, Coupler, Follower
+const G=160, CR=60, CO=140, FO=100; // Ground, Crank, Coupler, Follower
 const O1={x:180,y:200}, O2={x:O1.x+G,y:200};
 
-function toggleFourbar(){fRun=!fRun; document.getElementById('fourbarPlayBtn').textContent=fRun?'⏸ Pause':'▶ Play'; fRun?runFourbar():cancelAnimationFrame(fId);}
-function toggleFourbarDir(){fDir*=-1; document.getElementById('fourbarDirBtn').textContent=fDir===1?'🔄 CW':'🔄 CCW';}
-function setFourbarSpeed(v){fS=+v; document.getElementById('fourbarSpeedLbl').textContent=v+'x';}
+function toggleFourbar(){ fRun=!fRun; document.getElementById('fourbarPlayBtn').textContent=fRun?'⏸ Pause':'▶ Play'; fRun?runFourbar():cancelAnimationFrame(fId); }
+function toggleFourbarDir(){ fDir*=-1; document.getElementById('fourbarDirBtn').textContent=fDir===1?'🔄 CW':'🔄 CCW'; }
+function setFourbarSpeed(v){ fS=+v; document.getElementById('fourbarSpeedLbl').textContent=v+'x'; }
 
 function solveFourbar(theta2){
-  const Ax = O1.x + a * Math.cos(theta2);
-  const Ay = O1.y + a * Math.sin(theta2);
+  const Ax = O1.x + CR * Math.cos(theta2);
+  const Ay = O1.y + CR * Math.sin(theta2);
   const dx = Ax - O2.x, dy = Ay - O2.y;
-  const d = Math.sqrt(dx*dx + dy*dy);
+  const d = Math.hypot(dx, dy);
   const alpha = Math.atan2(dy, dx);
-  const cosBeta = Math.max(-1, Math.min(1, (b*b + d*d - c*c)/(2*b*d)));
+  const cosBeta = Math.max(-1, Math.min(1, (CO*CO + d*d - FO*FO)/(2*CO*d)));
   const beta = Math.acos(cosBeta);
   const theta3 = alpha - beta;
-  const Bx = Ax + b * Math.cos(theta3);
-  const By = Ay + b * Math.sin(theta3);
+  const Bx = Ax + CO * Math.cos(theta3);
+  const By = Ay + CO * Math.sin(theta3);
   const theta4 = Math.atan2(By - O2.y, Bx - O2.x);
-  return {A:{x:Ax,y:Ay}, B:{x:Bx,y:By}, theta3, theta4, d};
+  return {A:{x:Ax,y:Ay}, B:{x:Bx,y:By}, theta3, theta4};
 }
 
 function drawFourbar(c,a,whiteBg=false){
@@ -289,52 +315,52 @@ function drawFourbar(c,a,whiteBg=false){
   const M = {x:(sol.A.x+sol.B.x)/2, y:(sol.A.y+sol.B.y)/2};
   fTrace.push({x:M.x,y:M.y}); if(fTrace.length>400) fTrace.shift();
   
-  // Ground
   c.beginPath();c.moveTo(O1.x,O1.y);c.lineTo(O2.x,O2.y);c.strokeStyle= whiteBg ? '#555' : '#6a8aa0';c.lineWidth=6;c.stroke();
   c.beginPath();c.arc(O1.x,O1.y,8,0,Math.PI*2);c.fillStyle= whiteBg ? '#888' : '#aaa';c.fill();
   c.beginPath();c.arc(O2.x,O2.y,8,0,Math.PI*2);c.fillStyle= whiteBg ? '#888' : '#aaa';c.fill();
   
-  // Trace
   if(fTrace.length>1){
     c.beginPath();c.moveTo(fTrace[0].x,fTrace[0].y);
     for(let i=1;i<fTrace.length;i++) c.lineTo(fTrace[i].x,fTrace[i].y);
     c.strokeStyle= whiteBg ? '#d63355' : '#ff5577';c.lineWidth=1.5;c.stroke();
   }
   
-  // Links (RIGID)
   c.lineCap='round';
   c.beginPath();c.moveTo(O1.x,O1.y);c.lineTo(sol.A.x,sol.A.y);c.strokeStyle= whiteBg ? '#0066aa' : '#00aaff';c.lineWidth=6;c.stroke();
   c.beginPath();c.moveTo(sol.A.x,sol.A.y);c.lineTo(sol.B.x,sol.B.y);c.strokeStyle= whiteBg ? '#b37700' : '#e8a020';c.lineWidth=6;c.stroke();
   c.beginPath();c.moveTo(sol.B.x,sol.B.y);c.lineTo(O2.x,O2.y);c.strokeStyle= whiteBg ? '#3a8a3a' : '#4caf50';c.lineWidth=6;c.stroke();
   
-  // Joints
   c.beginPath();c.arc(sol.A.x,sol.A.y,5,0,Math.PI*2);c.fillStyle='#fff';c.fill();
   c.beginPath();c.arc(sol.B.x,sol.B.y,5,0,Math.PI*2);c.fillStyle='#fff';c.fill();
   c.beginPath();c.arc(M.x,M.y,4,0,Math.PI*2);c.fillStyle= whiteBg ? '#d63355' : '#ff5577';c.fill();
   
-  // Labels
   c.font='bold 11px Arial';
   c.fillStyle= whiteBg ? '#333' : '#00aaff'; c.fillText('Crank',(O1.x+sol.A.x)/2-16,(O1.y+sol.A.y)/2-8);
   c.fillStyle= whiteBg ? '#885500' : '#e8a020'; c.fillText('Coupler',(sol.A.x+sol.B.x)/2-22,(sol.A.y+sol.B.y)/2-8);
   c.fillStyle= whiteBg ? '#2a7a2a' : '#4caf50'; c.fillText('Rocker',(sol.B.x+O2.x)/2-12,(sol.B.y+O2.y)/2+18);
   c.fillStyle= whiteBg ? '#b02040' : '#ff5577'; c.fillText('Trace',M.x+8,M.y-8);
   
-  // Telemetry
   document.getElementById('fTheta').textContent=((a*180/Math.PI)%360).toFixed(0)+'°';
   document.getElementById('fPhi').textContent=((sol.theta4*180/Math.PI)%360).toFixed(0)+'°';
   document.getElementById('fBeta').textContent=((sol.theta3*180/Math.PI)%360).toFixed(0)+'°';
   document.getElementById('fType').textContent='Grashof';
 }
-function runFourbar(){fA+=0.01*fS*fDir; drawFourbar(fctx,fA); fId=requestAnimationFrame(runFourbar);}
+
+function runFourbar(){ fA+=0.01*fS*fDir; drawFourbar(fctx,fA); fId=requestAnimationFrame(runFourbar); }
 runFourbar();
+
 function downloadFourbar(){
   const off=document.createElement('canvas'); off.width=PW*DQ; off.height=PH*DQ;
   const c=off.getContext('2d'); c.scale(DQ,DQ);
   drawFourbar(c,fA,true);
   c.font='bold 12px Arial'; c.fillStyle='#222222'; c.globalAlpha=0.7;
-  c.fillText('⚙️ 4-Bar Linkage · engg-diagrams.github.io', 16, PH-14);
+  c.fillText('⚙️ 4-Bar Linkage · engg-diagrams.github.io | engg-diagram', 16, PH-14);
   const a=document.createElement('a'); a.download='fourbar-HD.png'; a.href=off.toDataURL('image/png'); a.click();
 }
+
+/* === INIT === */
+initZoom('pistonWrap', 'pistonCanvas');
+initZoom('fourbarWrap', 'fourbarCanvas');
 </script>
 </body>
 </html>
