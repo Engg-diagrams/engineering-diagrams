@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://engg-diagrams.github.io/sitemap.xml
