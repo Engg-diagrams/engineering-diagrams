@@ -2,184 +2,314 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Engineering Mechanisms</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: #0f1117;
-    color: #fff;
-    font-family: 'Arial', sans-serif;
-    min-height: 100vh;
-  }
-  header {
-    background: #161b22;
-    padding: 18px 30px;
-    border-bottom: 2px solid #00aaff;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  header h1 { color: #00aaff; font-size: 1.5rem; }
-  header span { color: #aaa; font-size: 0.9rem; }
-  .container {
-    max-width: 860px;
-    margin: 40px auto;
-    padding: 0 20px;
-  }
-  .card {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
-    padding: 28px;
-    margin-bottom: 28px;
-  }
-  .card h2 {
-    color: #00aaff;
-    margin-bottom: 6px;
-    font-size: 1.2rem;
-  }
-  .card p {
-    color: #8b949e;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-  }
-  canvas {
-    display: block;
-    margin: 0 auto;
-    background: #0d1117;
-    border-radius: 8px;
-    border: 1px solid #30363d;
-  }
-  .controls {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .controls label {
-    color: #ccc;
-    font-size: 0.9rem;
-    white-space: nowrap;
-  }
-  input[type=range] {
-    -webkit-appearance: none;
-    flex: 1;
-    min-width: 120px;
-    height: 6px;
-    background: #30363d;
-    border-radius: 4px;
-    outline: none;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    background: #00aaff;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  .speed-val {
-    color: #00aaff;
-    font-weight: bold;
-    min-width: 36px;
-    font-size: 0.9rem;
-  }
-  button {
-    background: #00aaff;
-    color: #000;
-    border: none;
-    padding: 10px 22px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9rem;
-    transition: background 0.2s;
-  }
-  button:hover { background: #0088cc; }
-  .btn-outline {
-    background: transparent;
-    border: 1px solid #00aaff;
-    color: #00aaff;
-  }
-  .btn-outline:hover { background: #00aaff22; }
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 14px;
-    margin-top: 20px;
-  }
-  .info-box {
-    background: #0d1117;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    padding: 14px;
-    text-align: center;
-  }
-  .info-box .val {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #00aaff;
-  }
-  .info-box .lbl {
-    font-size: 0.75rem;
-    color: #8b949e;
-    margin-top: 4px;
-  }
-  footer {
-    text-align: center;
-    color: #444;
-    font-size: 0.8rem;
-    padding: 30px;
-  }
+  body { background: #0f1117; color: #fff; font-family: Arial, sans-serif; min-height: 100vh; }
+  header { background: #161b22; padding: 14px 18px; border-bottom: 2px solid #00aaff; }
+  header h1 { color: #00aaff; font-size: 1.2rem; }
+  header span { color: #aaa; font-size: 0.8rem; }
+  .container { max-width: 860px; margin: 20px auto; padding: 0 12px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+  .card h2 { color: #00aaff; font-size: 1.05rem; margin-bottom: 4px; }
+  .card p { color: #8b949e; font-size: 0.82rem; margin-bottom: 14px; line-height: 1.5; }
+  .canvas-wrap { width: 100%; overflow: hidden; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; }
+  canvas { display: block; width: 100%; height: auto; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
+  .controls label { color: #ccc; font-size: 0.88rem; white-space: nowrap; }
+  .slider-row { display: flex; align-items: center; gap: 10px; width: 100%; }
+  input[type=range] { -webkit-appearance: none; flex: 1; height: 8px; background: #30363d; border-radius: 4px; outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; background: #00aaff; border-radius: 50%; cursor: pointer; }
+  .speed-val { color: #00aaff; font-weight: bold; min-width: 30px; font-size: 0.9rem; }
+  .btn-row { display: flex; gap: 10px; width: 100%; flex-wrap: wrap; }
+  button { flex: 1; min-width: 120px; background: #00aaff; color: #000; border: none; padding: 13px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem; touch-action: manipulation; transition: background 0.2s; }
+  button:active { background: #0077bb; }
+  .btn-outline { background: transparent; border: 1.5px solid #00aaff; color: #00aaff; }
+  .btn-outline:active { background: #00aaff22; }
+  .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; }
+  @media (min-width: 500px) { .info-grid { grid-template-columns: repeat(4, 1fr); } }
+  .info-box { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 12px 8px; text-align: center; }
+  .info-box .val { font-size: 1.3rem; font-weight: bold; color: #00aaff; }
+  .info-box .lbl { font-size: 0.72rem; color: #8b949e; margin-top: 3px; }
+  footer { text-align: center; color: #444; font-size: 0.78rem; padding: 24px 10px; }
+  .quality-badge { display: inline-block; background: #0d2a0d; color: #4caf50; border: 1px solid #4caf50; border-radius: 6px; font-size: 0.75rem; padding: 3px 9px; margin-left: 8px; vertical-align: middle; }
 </style>
 </head>
 <body>
 
 <header>
-  <div>
-    <h1>⚙️ Engineering Mechanisms</h1>
-    <span>Interactive mechanisms by Mohammad Samir</span>
-  </div>
+  <h1>⚙️ Engineering Mechanisms</h1>
+  <span>Interactive mechanisms by Mohammad Samir</span>
 </header>
 
 <div class="container">
-
   <div class="card">
-    <h2>🔩 Piston – Crank Mechanism</h2>
-    <p>A rotating crank connected via a rod drives a piston in linear reciprocating motion. Use the controls below to interact.</p>
+    <h2>🔩 Piston – Crank Mechanism <span class="quality-badge">⬇ 4K Download</span></h2>
+    <p>A rotating crank drives a piston in reciprocating motion inside a fixed cylinder. Adjust speed and watch the live stats update.</p>
 
-    <canvas id="pistonCanvas" width="780" height="320"></canvas>
+    <div class="canvas-wrap">
+      <canvas id="pistonCanvas"></canvas>
+    </div>
 
     <div class="controls">
-      <button id="playBtn" onclick="togglePlay()">⏸ Pause</button>
-      <label>Speed:</label>
-      <input type="range" id="speedSlider" min="1" max="10" value="4" oninput="updateSpeed(this.value)"/>
-      <span class="speed-val" id="speedLabel">4x</span>
-      <button class="btn-outline" onclick="downloadCanvas()">⬇ Download Diagram</button>
+      <div class="btn-row">
+        <button id="playBtn" ontouchstart="" onclick="togglePlay()">⏸ Pause</button>
+        <button class="btn-outline" ontouchstart="" onclick="downloadHQ()">⬇ Download HD</button>
+      </div>
+      <div class="slider-row">
+        <label>Speed:</label>
+        <input type="range" id="speedSlider" min="1" max="10" value="4" oninput="updateSpeed(this.value)"/>
+        <span class="speed-val" id="speedLabel">4x</span>
+      </div>
     </div>
 
     <div class="info-grid">
-      <div class="info-box">
-        <div class="val" id="rpmVal">120</div>
-        <div class="lbl">RPM</div>
-      </div>
-      <div class="info-box">
-        <div class="val" id="angleVal">0°</div>
-        <div class="lbl">Crank Angle</div>
-      </div>
-      <div class="info-box">
-        <div class="val" id="strokeVal">0 px</div>
-        <div class="lbl">Piston Stroke</div>
-      </div>
-      <div class="info-box">
-        <div class="val" id="posVal">TDC</div>
-        <div class="lbl">Position</div>
-      </div>
+      <div class="info-box"><div class="val" id="rpmVal">120</div><div class="lbl">RPM</div></div>
+      <div class="info-box"><div class="val" id="angleVal">0°</div><div class="lbl">Crank Angle</div></div>
+      <div class="info-box"><div class="val" id="strokeVal">0 px</div><div class="lbl">Piston Stroke</div></div>
+      <div class="info-box"><div class="val" id="posVal">TDC</div><div class="lbl">Position</div></div>
     </div>
   </div>
+</div>
 
+<footer>Built with GitHub Pages · Free & Open Engineering Tools</footer>
+
+<script>
+  const canvas = document.getElementById('pistonCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  const BASE_W = 780, BASE_H = 320;
+  const DISPLAY_SCALE  = window.devicePixelRatio || 1;
+  const DOWNLOAD_SCALE = 4;
+
+  canvas.width  = BASE_W * DISPLAY_SCALE;
+  canvas.height = BASE_H * DISPLAY_SCALE;
+  ctx.scale(DISPLAY_SCALE, DISPLAY_SCALE);
+
+  // --- Mechanism constants ---
+  const CX = 185, CY = 160;  // Crank shaft center (fixed to frame)
+  const R  = 65;              // Crank radius
+  const L  = 150;             // Connecting rod length
+
+  // --- FIXED cylinder walls (never change) ---
+  const CYL_TOP   = CY - 36;
+  const CYL_BOT   = CY + 36;
+  const CYL_LEFT  = CX + R + 10;   // left opening edge (fixed)
+  const CYL_RIGHT = CX + R + L + 60; // right end cap (fixed)
+  const CYL_H     = CYL_BOT - CYL_TOP;
+
+  // Piston block size (fits inside cylinder)
+  const PW = 38, PH = 64;
+
+  let angle = 0, speed = 4, playing = true, animId;
+
+  function togglePlay() {
+    playing = !playing;
+    document.getElementById('playBtn').textContent = playing ? '⏸ Pause' : '▶ Play';
+    if (playing) animate(); else cancelAnimationFrame(animId);
+  }
+
+  function updateSpeed(v) {
+    speed = parseFloat(v);
+    document.getElementById('speedLabel').textContent = v + 'x';
+    document.getElementById('rpmVal').textContent = (speed * 30).toFixed(0);
+  }
+
+  function downloadHQ() {
+    const off = document.createElement('canvas');
+    off.width  = BASE_W * DOWNLOAD_SCALE;
+    off.height = BASE_H * DOWNLOAD_SCALE;
+    const oc = off.getContext('2d');
+    oc.scale(DOWNLOAD_SCALE, DOWNLOAD_SCALE);
+    oc.fillStyle = '#0d1117';
+    oc.fillRect(0, 0, BASE_W, BASE_H);
+    drawScene(oc, angle);
+    oc.font = 'bold 13px Arial';
+    oc.fillStyle = '#00aaff';
+    oc.globalAlpha = 0.45;
+    oc.fillText('⚙️ Piston–Crank · mohammadsamir35.github.io', 16, BASE_H - 10);
+    oc.globalAlpha = 1;
+    const link = document.createElement('a');
+    link.download = 'piston-crank-HQ.png';
+    link.href = off.toDataURL('image/png');
+    link.click();
+  }
+
+  function drawScene(c, a) {
+    const W = BASE_W, H = BASE_H;
+
+    // Background grid
+    c.strokeStyle = '#1a2030'; c.lineWidth = 1;
+    for (let x = 0; x < W; x += 30) { c.beginPath(); c.moveTo(x,0); c.lineTo(x,H); c.stroke(); }
+    for (let y = 0; y < H; y += 30) { c.beginPath(); c.moveTo(0,y); c.lineTo(W,y); c.stroke(); }
+
+    // Moving parts calculation
+    const cpX = CX + R * Math.cos(a);   // crank pin X
+    const cpY = CY + R * Math.sin(a);   // crank pin Y
+    const dy  = cpY - CY;
+    const pistonX = cpX + Math.sqrt(L * L - dy * dy); // piston center X (moves left/right)
+    const pistonY = CY;                                // piston always on centre axis
+
+    // ── FIXED CYLINDER (drawn behind everything) ──────────────────
+
+    // Inner bore fill
+    c.fillStyle = '#0d1520';
+    c.fillRect(CYL_LEFT, CYL_TOP + 4, CYL_RIGHT - CYL_LEFT, CYL_H - 8);
+
+    // Top wall slab
+    c.fillStyle = '#1e2d3d';
+    c.fillRect(CYL_LEFT, CYL_TOP - 14, CYL_RIGHT - CYL_LEFT + 12, 14);
+
+    // Bottom wall slab
+    c.fillStyle = '#1e2d3d';
+    c.fillRect(CYL_LEFT, CYL_BOT, CYL_RIGHT - CYL_LEFT + 12, 14);
+
+    // End cap slab
+    c.fillStyle = '#1e2d3d';
+    c.fillRect(CYL_RIGHT, CYL_TOP - 14, 14, CYL_H + 28);
+
+    // Hatch lines on top wall (engineering convention = fixed support)
+    c.strokeStyle = '#2e4055'; c.lineWidth = 1;
+    for (let i = 0; i <= 28; i++) {
+      c.beginPath();
+      c.moveTo(CYL_LEFT + i * 14, CYL_TOP - 1);
+      c.lineTo(CYL_LEFT + i * 14 - 10, CYL_TOP - 12);
+      c.stroke();
+    }
+    // Hatch lines on bottom wall
+    for (let i = 0; i <= 28; i++) {
+      c.beginPath();
+      c.moveTo(CYL_LEFT + i * 14, CYL_BOT + 1);
+      c.lineTo(CYL_LEFT + i * 14 - 10, CYL_BOT + 12);
+      c.stroke();
+    }
+
+    // Cylinder top border line
+    c.beginPath(); c.moveTo(CYL_LEFT, CYL_TOP); c.lineTo(CYL_RIGHT + 14, CYL_TOP);
+    c.strokeStyle = '#6a8aa0'; c.lineWidth = 3; c.stroke();
+
+    // Cylinder bottom border line
+    c.beginPath(); c.moveTo(CYL_LEFT, CYL_BOT); c.lineTo(CYL_RIGHT + 14, CYL_BOT);
+    c.strokeStyle = '#6a8aa0'; c.lineWidth = 3; c.stroke();
+
+    // End cap border line
+    c.beginPath(); c.moveTo(CYL_RIGHT, CYL_TOP - 14); c.lineTo(CYL_RIGHT, CYL_BOT + 14);
+    c.strokeStyle = '#6a8aa0'; c.lineWidth = 4; c.stroke();
+
+    // ── CRANK GUIDE CIRCLE ─────────────────────────────────────────
+    c.beginPath(); c.arc(CX, CY, R, 0, Math.PI * 2);
+    c.strokeStyle = '#1e3a5f'; c.lineWidth = 1.5;
+    c.setLineDash([4, 4]); c.stroke(); c.setLineDash([]);
+
+    // ── CONNECTING ROD ─────────────────────────────────────────────
+    c.beginPath(); c.moveTo(cpX, cpY); c.lineTo(pistonX, pistonY);
+    c.strokeStyle = '#e8a020'; c.lineWidth = 5; c.lineCap = 'round'; c.stroke();
+
+    // ── CRANK ARM ──────────────────────────────────────────────────
+    c.beginPath(); c.moveTo(CX, CY); c.lineTo(cpX, cpY);
+    c.strokeStyle = '#00aaff'; c.lineWidth = 7; c.lineCap = 'round'; c.stroke();
+
+    // ── PISTON (slides inside fixed cylinder) ─────────────────────
+    c.fillStyle = '#2a5080';
+    c.strokeStyle = '#4a9fdf';
+    c.lineWidth = 2;
+    c.beginPath();
+    c.roundRect(pistonX - PW / 2, pistonY - PH / 2, PW, PH, 4);
+    c.fill(); c.stroke();
+
+    // Piston ring grooves
+    [-16, 0, 16].forEach(offset => {
+      c.beginPath();
+      c.moveTo(pistonX - PW / 2 + 3, pistonY + offset);
+      c.lineTo(pistonX + PW / 2 - 3, pistonY + offset);
+      c.strokeStyle = '#1a3a5a'; c.lineWidth = 2.5; c.stroke();
+    });
+
+    // Gudgeon pin
+    c.beginPath(); c.arc(pistonX, pistonY, 5, 0, Math.PI * 2);
+    c.fillStyle = '#aaa'; c.fill();
+
+    // ── PINS ───────────────────────────────────────────────────────
+    // Main journal (crank centre)
+    c.beginPath(); c.arc(CX, CY, 11, 0, Math.PI * 2);
+    c.fillStyle = '#1a1a2e'; c.fill();
+    c.strokeStyle = '#00aaff'; c.lineWidth = 2.5; c.stroke();
+
+    // Crank pin
+    c.beginPath(); c.arc(cpX, cpY, 8, 0, Math.PI * 2);
+    c.fillStyle = '#e8a020'; c.fill();
+    c.strokeStyle = '#fff4'; c.lineWidth = 1; c.stroke();
+
+    // ── CENTRE AXIS (dashed) ───────────────────────────────────────
+    c.beginPath(); c.moveTo(CX - 25, CY); c.lineTo(CYL_RIGHT + 20, CY);
+    c.strokeStyle = '#2a3a4a'; c.lineWidth = 1;
+    c.setLineDash([5, 5]); c.stroke(); c.setLineDash([]);
+
+    // ── LABELS ─────────────────────────────────────────────────────
+    c.font = 'bold 11px Arial';
+    c.fillStyle = '#00aaff';   c.fillText('Crank', CX - 20, CY + 28);
+    c.fillStyle = '#e8a020';   c.fillText('Con. Rod', (cpX + pistonX) / 2 - 26, (cpY + pistonY) / 2 - 10);
+    c.fillStyle = '#7ab8e8';   c.fillText('Piston', pistonX - 14, CYL_BOT + 28);
+    c.fillStyle = '#6a8aa0';   c.fillText('Cylinder (fixed)', CYL_LEFT + 8, CYL_TOP - 18);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, BASE_W, BASE_H);
+    drawScene(ctx, angle);
+
+    const deg = ((angle * 180 / Math.PI) % 360 + 360) % 360;
+    const dy  = R * Math.sin(angle);
+    const pistonX = CX + R * Math.cos(angle) + Math.sqrt(L * L - dy * dy);
+    const maxX    = CX + R + L;
+    const stroke  = maxX - pistonX;
+
+    document.getElementById('angleVal').textContent  = deg.toFixed(0) + '°';
+    document.getElementById('strokeVal').textContent = stroke.toFixed(0) + ' px';
+    document.getElementById('posVal').textContent =
+      deg < 10 || deg > 350 ? 'TDC' :
+      deg > 170 && deg < 190 ? 'BDC' :
+      deg < 180 ? 'Power ↓' : 'Return ↑';
+  }
+
+  function animate() {
+    angle += 0.01 * speed;
+    draw();
+    animId = requestAnimationFrame(animate);
+  }
+
+  animate();
+</script>
+</body>
+</html>
+<div class="container">
+  <div class="card">
+    <h2>🔩 Piston – Crank Mechanism <span class="quality-badge">⬇ 4K Download</span></h2>
+    <p>A rotating crank drives a piston in reciprocating motion via a connecting rod. Adjust speed and watch the live stats update.</p>
+
+    <div class="canvas-wrap">
+      <canvas id="pistonCanvas"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="btn-row">
+        <button id="playBtn" ontouchstart="" onclick="togglePlay()">⏸ Pause</button>
+        <button class="btn-outline" ontouchstart="" onclick="downloadHQ()">⬇ Download HD</button>
+      </div>
+      <div class="slider-row">
+        <label>Speed:</label>
+        <input type="range" id="speedSlider" min="1" max="10" value="4" oninput="updateSpeed(this.value)"/>
+        <span class="speed-val" id="speedLabel">4x</span>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box"><div class="val" id="rpmVal">120</div><div class="lbl">RPM</div></div>
+      <div class="info-box"><div class="val" id="angleVal">0°</div><div class="lbl">Crank Angle</div></div>
+      <div class="info-box"><div class="val" id="strokeVal">0 px</div><div class="lbl">Piston Stroke</div></div>
+      <div class="info-box"><div class="val" id="posVal">TDC</div><div class="lbl">Position</div></div>
+    </div>
+  </div>
 </div>
 
 <footer>Built with GitHub Pages · Free & Open Engineering Tools</footer>
@@ -188,15 +318,23 @@
   const canvas = document.getElementById('pistonCanvas');
   const ctx = canvas.getContext('2d');
 
-  // Layout
-  const CX = 200, CY = 160; // crank center
-  const R = 70;              // crank radius
-  const L = 160;             // connecting rod length
+  // Base logical size
+  const BASE_W = 780;
+  const BASE_H = 320;
 
-  let angle = 0;
-  let speed = 4;
-  let playing = true;
-  let animId;
+  // SCALE = how many real pixels per logical pixel
+  // 1 = normal screen quality
+  // 4 = 4× resolution = 3120×1280px download (very crisp)
+  const DISPLAY_SCALE = window.devicePixelRatio || 1;
+  const DOWNLOAD_SCALE = 4;
+
+  // Set canvas internal resolution for display
+  canvas.width  = BASE_W * DISPLAY_SCALE;
+  canvas.height = BASE_H * DISPLAY_SCALE;
+  ctx.scale(DISPLAY_SCALE, DISPLAY_SCALE);
+
+  const CX = 200, CY = 160, R = 70, L = 160;
+  let angle = 0, speed = 4, playing = true, animId;
 
   function togglePlay() {
     playing = !playing;
@@ -211,138 +349,108 @@
     document.getElementById('rpmVal').textContent = (speed * 30).toFixed(0);
   }
 
-  function downloadCanvas() {
+  // ✅ HIGH QUALITY DOWNLOAD
+  // Creates a separate off-screen canvas at 4× size, draws everything at full res, exports as PNG
+  function downloadHQ() {
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width  = BASE_W * DOWNLOAD_SCALE;
+    offCanvas.height = BASE_H * DOWNLOAD_SCALE;
+    const offCtx = offCanvas.getContext('2d');
+    offCtx.scale(DOWNLOAD_SCALE, DOWNLOAD_SCALE);
+
+    // Draw background
+    offCtx.fillStyle = '#0d1117';
+    offCtx.fillRect(0, 0, BASE_W, BASE_H);
+
+    // Draw the mechanism at current angle into off-screen canvas
+    drawScene(offCtx, angle);
+
+    // Add watermark / title to downloaded image
+    offCtx.fillStyle = 'rgba(0,170,255,0.15)';
+    offCtx.font = 'bold 13px Arial';
+    offCtx.fillStyle = '#00aaff';
+    offCtx.globalAlpha = 0.5;
+    offCtx.fillText('⚙️ Piston–Crank Mechanism · mohammadsamir35.github.io', 16, BASE_H - 12);
+    offCtx.globalAlpha = 1;
+
+    // Trigger download
     const link = document.createElement('a');
-    link.download = 'piston-crank-diagram.png';
-    link.href = canvas.toDataURL();
+    link.download = 'piston-crank-HQ.png';
+    link.href = offCanvas.toDataURL('image/png');
     link.click();
   }
 
-  function draw() {
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
+  // Draws the full mechanism scene onto any given context
+  function drawScene(c, a) {
+    const W = BASE_W, H = BASE_H;
 
-    // Background grid
-    ctx.strokeStyle = '#1a2030';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < W; x += 30) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-    }
-    for (let y = 0; y < H; y += 30) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
+    // Grid
+    c.strokeStyle = '#1a2030'; c.lineWidth = 1;
+    for (let x = 0; x < W; x += 30) { c.beginPath(); c.moveTo(x,0); c.lineTo(x,H); c.stroke(); }
+    for (let y = 0; y < H; y += 30) { c.beginPath(); c.moveTo(0,y); c.lineTo(W,y); c.stroke(); }
 
-    // Crank pin position
-    const px = CX + R * Math.cos(angle);
-    const py = CY + R * Math.sin(angle);
-
-    // Piston x (constrained to horizontal axis)
-    const dx = px - CX;
-    const dy = py - CY;
+    const px = CX + R * Math.cos(a);
+    const py = CY + R * Math.sin(a);
+    const dx = px - CX, dy = py - CY;
     const pistonX = CX + dx + Math.sqrt(L * L - dy * dy);
     const pistonY = CY;
 
-    // --- Draw crank circle guide ---
-    ctx.beginPath();
-    ctx.arc(CX, CY, R, 0, Math.PI * 2);
-    ctx.strokeStyle = '#1e3a5f';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    // Crank guide
+    c.beginPath(); c.arc(CX, CY, R, 0, Math.PI*2);
+    c.strokeStyle = '#1e3a5f'; c.lineWidth = 1.5;
+    c.setLineDash([4,4]); c.stroke(); c.setLineDash([]);
 
-    // --- Draw connecting rod ---
-    ctx.beginPath();
-    ctx.moveTo(px, py);
-    ctx.lineTo(pistonX, pistonY);
-    ctx.strokeStyle = '#e8a020';
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    ctx.stroke();
+    // Connecting rod
+    c.beginPath(); c.moveTo(px, py); c.lineTo(pistonX, pistonY);
+    c.strokeStyle = '#e8a020'; c.lineWidth = 5; c.lineCap = 'round'; c.stroke();
 
-    // --- Draw crank arm ---
-    ctx.beginPath();
-    ctx.moveTo(CX, CY);
-    ctx.lineTo(px, py);
-    ctx.strokeStyle = '#00aaff';
-    ctx.lineWidth = 6;
-    ctx.stroke();
+    // Crank arm
+    c.beginPath(); c.moveTo(CX, CY); c.lineTo(px, py);
+    c.strokeStyle = '#00aaff'; c.lineWidth = 6; c.stroke();
 
-    // --- Cylinder walls ---
-    const cylTop = CY - 36;
-    const cylBot = CY + 36;
-    const cylEnd = pistonX + 80;
+    // Cylinder walls
+    const cylTop=CY-36, cylBot=CY+36, cylEnd=pistonX+80;
+    c.strokeStyle='#444'; c.lineWidth=2;
+    c.beginPath(); c.moveTo(CX+R+20,cylTop); c.lineTo(cylEnd,cylTop); c.stroke();
+    c.beginPath(); c.moveTo(CX+R+20,cylBot); c.lineTo(cylEnd,cylBot); c.stroke();
+    c.beginPath(); c.moveTo(cylEnd,cylTop); c.lineTo(cylEnd,cylBot); c.stroke();
 
-    ctx.strokeStyle = '#444';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(CX + R + 20, cylTop); ctx.lineTo(cylEnd, cylTop); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(CX + R + 20, cylBot); ctx.lineTo(cylEnd, cylBot); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(cylEnd, cylTop); ctx.lineTo(cylEnd, cylBot); ctx.stroke();
-
-    // --- Piston block ---
-    const pw = 44, ph = 60;
-    ctx.fillStyle = '#2a5080';
-    ctx.strokeStyle = '#00aaff';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(pistonX - pw / 2, pistonY - ph / 2, pw, ph, 5);
-    ctx.fill();
-    ctx.stroke();
-
-    // Piston grooves
-    for (let i = -1; i <= 1; i++) {
-      ctx.beginPath();
-      ctx.moveTo(pistonX - pw / 2 + 4, pistonY + i * 14);
-      ctx.lineTo(pistonX + pw / 2 - 4, pistonY + i * 14);
-      ctx.strokeStyle = '#1a3a5a';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+    // Piston
+    const pw=44, ph=60;
+    c.fillStyle='#2a5080'; c.strokeStyle='#00aaff'; c.lineWidth=2;
+    c.beginPath(); c.roundRect(pistonX-pw/2, pistonY-ph/2, pw, ph, 5);
+    c.fill(); c.stroke();
+    for (let i=-1; i<=1; i++) {
+      c.beginPath();
+      c.moveTo(pistonX-pw/2+4, pistonY+i*14);
+      c.lineTo(pistonX+pw/2-4, pistonY+i*14);
+      c.strokeStyle='#1a3a5a'; c.lineWidth=2; c.stroke();
     }
 
-    // --- Crank center pin ---
-    ctx.beginPath();
-    ctx.arc(CX, CY, 10, 0, Math.PI * 2);
-    ctx.fillStyle = '#333';
-    ctx.fill();
-    ctx.strokeStyle = '#00aaff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    // Pins
+    c.beginPath(); c.arc(CX,CY,10,0,Math.PI*2); c.fillStyle='#333'; c.fill();
+    c.strokeStyle='#00aaff'; c.lineWidth=2; c.stroke();
+    c.beginPath(); c.arc(px,py,8,0,Math.PI*2); c.fillStyle='#e8a020'; c.fill();
+    c.beginPath(); c.arc(pistonX,pistonY,7,0,Math.PI*2); c.fillStyle='#aaa'; c.fill();
 
-    // --- Crank pin circle ---
-    ctx.beginPath();
-    ctx.arc(px, py, 8, 0, Math.PI * 2);
-    ctx.fillStyle = '#e8a020';
-    ctx.fill();
+    // Labels
+    c.font='bold 11px Arial';
+    c.fillStyle='#00aaff'; c.fillText('Crank', CX-18, CY+28);
+    c.fillStyle='#e8a020'; c.fillText('Con. Rod', (px+pistonX)/2-24, (py+pistonY)/2-10);
+    c.fillStyle='#7ab8e8'; c.fillText('Piston', pistonX-15, pistonY+ph/2+16);
 
-    // --- Big end (rod-crank joint) ---
-    ctx.beginPath();
-    ctx.arc(pistonX, pistonY, 7, 0, Math.PI * 2);
-    ctx.fillStyle = '#aaa';
-    ctx.fill();
+    // Axis
+    c.beginPath(); c.moveTo(CX,CY); c.lineTo(pistonX+20,CY);
+    c.strokeStyle='#333'; c.lineWidth=1; c.setLineDash([3,3]); c.stroke(); c.setLineDash([]);
+  }
 
-    // --- Labels ---
-    ctx.fillStyle = '#00aaff';
-    ctx.font = 'bold 11px Arial';
-    ctx.fillText('Crank', CX - 18, CY + 28);
-    ctx.fillStyle = '#e8a020';
-    ctx.fillText('Con. Rod', (px + pistonX) / 2 - 24, (py + pistonY) / 2 - 10);
-    ctx.fillStyle = '#7ab8e8';
-    ctx.fillText('Piston', pistonX - 15, pistonY + ph / 2 + 16);
+  function draw() {
+    ctx.clearRect(0, 0, BASE_W, BASE_H);
+    drawScene(ctx, angle);
 
-    // --- Axis line ---
-    ctx.beginPath();
-    ctx.moveTo(CX, CY);
-    ctx.lineTo(pistonX + 20, CY);
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([3, 3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Update info
     const deg = ((angle * 180 / Math.PI) % 360 + 360) % 360;
+    const pistonX = CX + (CX + R*Math.cos(angle) - CX) + Math.sqrt(L*L - Math.pow(R*Math.sin(angle),2));
     const stroke = pistonX - (CX + R + L);
-    const maxStroke = 2 * R;
     document.getElementById('angleVal').textContent = deg.toFixed(0) + '°';
     document.getElementById('strokeVal').textContent = Math.abs(stroke).toFixed(0) + ' px';
     document.getElementById('posVal').textContent =
