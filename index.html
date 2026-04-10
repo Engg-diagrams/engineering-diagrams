@@ -22,18 +22,20 @@
   .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
   .card h2 { color: #00aaff; font-size: 1.05rem; margin-bottom: 4px; }
   .card p { color: #8b949e; font-size: 0.82rem; margin-bottom: 14px; line-height: 1.5; }
-  .canvas-wrap { width: 100%; overflow: hidden; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; }
-  canvas { display: block; width: 100%; height: auto; }
+  .canvas-wrap { width: 100%; overflow: auto; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; display: flex; justify-content: center; align-items: flex-start; }
+  canvas { display: block; transform-origin: center center; transition: transform 0.2s ease; image-rendering: auto; }
   .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
   .slider-row { display: flex; align-items: center; gap: 10px; width: 100%; }
   input[type=range] { -webkit-appearance: none; flex: 1; height: 8px; background: #30363d; border-radius: 4px; outline: none; }
   input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; background: #00aaff; border-radius: 50%; cursor: pointer; }
   .speed-val { color: #00aaff; font-weight: bold; min-width: 30px; font-size: 0.9rem; }
   .btn-row { display: flex; gap: 10px; width: 100%; flex-wrap: wrap; }
-  button { flex: 1; min-width: 120px; background: #00aaff; color: #000; border: none; padding: 13px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem; touch-action: manipulation; transition: background 0.2s; }
+  button { flex: 1; min-width: 100px; background: #00aaff; color: #000; border: none; padding: 12px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem; touch-action: manipulation; transition: background 0.2s; }
   button:active { background: #0077bb; }
   .btn-outline { background: transparent; border: 1.5px solid #00aaff; color: #00aaff; }
   .btn-outline:active { background: #00aaff22; }
+  .zoom-row { display: flex; gap: 8px; width: 100%; margin-top: 10px; align-items: center; }
+  .zoom-btn { min-width: 40px; padding: 8px; font-size: 1.1rem; }
   .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; }
   @media (min-width: 500px) { .info-grid { grid-template-columns: repeat(4, 1fr); } }
   .info-box { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 12px 8px; text-align: center; }
@@ -62,12 +64,12 @@
 
 <header>
   <h1>Engineering Mechanisms</h1>
-  <span>Interactive diagrams by [Your Name]</span>
+  <span>Interactive diagrams by engg-diagrams</span>
 </header>
 
 <div class="container">
 
-  <!-- PISTON-CRANKe -->
+  <!-- PISTON-CRANK -->
   <section id="piston" class="mechanism-section active" data-tags="piston crank engine reciprocating slider">
     <div class="card">
       <h2>🔩 Piston – Crank Mechanism <span class="quality-badge">⬇ 4K PNG</span></h2>
@@ -76,12 +78,20 @@
       <div class="controls">
         <div class="btn-row">
           <button id="pistonPlayBtn" onclick="togglePiston()">⏸ Pause</button>
+          <button id="pistonDirBtn" class="btn-outline" onclick="togglePistonDir()">🔄 CW</button>
           <button class="btn-outline" onclick="downloadPiston()">⬇ Download HD</button>
         </div>
         <div class="slider-row">
           <label>Speed:</label>
           <input type="range" id="pistonSpeed" min="1" max="10" value="4" oninput="setPistonSpeed(this.value)">
           <span class="speed-val" id="pistonSpeedLbl">4x</span>
+        </div>
+        <div class="zoom-row">
+          <label style="color:#aaa; margin-right:6px;">Zoom:</label>
+          <button class="btn-outline zoom-btn" onclick="zoomCanvas('pistonCanvas', -0.2)">−</button>
+          <span id="pistonZoomLbl" style="color:#00aaff; min-width:40px; text-align:center;">1.0x</span>
+          <button class="btn-outline zoom-btn" onclick="zoomCanvas('pistonCanvas', 0.2)">+</button>
+          <button class="btn-outline" style="margin-left:auto; min-width:60px;" onclick="resetZoom('pistonCanvas')">Reset</button>
         </div>
       </div>
       <div class="info-grid">
@@ -102,12 +112,20 @@
       <div class="controls">
         <div class="btn-row">
           <button id="fourbarPlayBtn" onclick="toggleFourbar()">⏸ Pause</button>
+          <button id="fourbarDirBtn" class="btn-outline" onclick="toggleFourbarDir()">🔄 CW</button>
           <button class="btn-outline" onclick="downloadFourbar()">⬇ Download HD</button>
         </div>
         <div class="slider-row">
           <label>Speed:</label>
           <input type="range" id="fourbarSpeed" min="1" max="10" value="3" oninput="setFourbarSpeed(this.value)">
           <span class="speed-val" id="fourbarSpeedLbl">3x</span>
+        </div>
+        <div class="zoom-row">
+          <label style="color:#aaa; margin-right:6px;">Zoom:</label>
+          <button class="btn-outline zoom-btn" onclick="zoomCanvas('fourbarCanvas', -0.2)">−</button>
+          <span id="fourbarZoomLbl" style="color:#00aaff; min-width:40px; text-align:center;">1.0x</span>
+          <button class="btn-outline zoom-btn" onclick="zoomCanvas('fourbarCanvas', 0.2)">+</button>
+          <button class="btn-outline" style="margin-left:auto; min-width:60px;" onclick="resetZoom('fourbarCanvas')">Reset</button>
         </div>
       </div>
       <div class="info-grid">
@@ -129,8 +147,10 @@ const sections = document.querySelectorAll('.mechanism-section');
 const navLinks = document.querySelectorAll('.nav-links a');
 const search = document.getElementById('searchInput');
 function show(id){
-  sections.forEach(s=>{s.classList.toggle('active', id==='all'||s.id===id||s.dataset.tags.includes(id))});
-  navLinks.forEach(l=>{l.classList.toggle('active', l.dataset.filter===id)});
+  sections.forEach(s=>{
+    s.classList.toggle('active', id==='all'||s.id===id||s.dataset.tags.includes(id));
+  });
+  navLinks.forEach(l=>{l.classList.toggle('active', l.dataset.filter===id);});
 }
 navLinks.forEach(l=>{l.onclick=e=>{e.preventDefault(); show(l.dataset.filter); search.value='';}});
 search.oninput=e=>{
@@ -144,128 +164,176 @@ search.oninput=e=>{
 };
 show('piston');
 
+/* === ZOOM UTILS === */
+let zoomLevels = {pistonCanvas:1, fourbarCanvas:1};
+function zoomCanvas(id, delta){
+  const c = document.getElementById(id);
+  zoomLevels[id] = Math.max(0.4, Math.min(3, zoomLevels[id] + delta));
+  c.style.transform = `scale(${zoomLevels[id]})`;
+  document.getElementById(id.replace('Canvas','')+'ZoomLbl').textContent = zoomLevels[id].toFixed(1)+'x';
+}
+function resetZoom(id){
+  zoomLevels[id]=1; document.getElementById(id).style.transform='scale(1)';
+  document.getElementById(id.replace('Canvas','')+'ZoomLbl').textContent='1.0x';
+}
+
 /* === PISTON-CRANK === */
 const pc=document.getElementById('pistonCanvas'), pctx=pc.getContext('2d');
 const PW=780, PH=320, DS=window.devicePixelRatio||1, DQ=4;
 pc.width=PW*DS; pc.height=PH*DS; pctx.scale(DS,DS);
-let pA=0, pS=4, pRun=true, pId;
+let pA=0, pS=4, pDir=1, pRun=true, pId;
 const CX=185, CY=160, R=65, L=150;
 const CT=CY-36, CB=CY+36, CL=CX+R+10, CR=CX+R+L+60, PW2=38, PH2=64;
 
 function togglePiston(){pRun=!pRun; document.getElementById('pistonPlayBtn').textContent=pRun?'⏸ Pause':'▶ Play'; pRun?runPiston():cancelAnimationFrame(pId);}
+function togglePistonDir(){pDir*=-1; document.getElementById('pistonDirBtn').textContent=pDir===1?'🔄 CW':'🔄 CCW';}
 function setPistonSpeed(v){pS=+v; document.getElementById('pistonSpeedLbl').textContent=v+'x'; document.getElementById('pRPM').textContent=(v*30).toFixed(0);}
-function drawPiston(c,a){
+
+function drawPiston(c,a,whiteBg=false){
   c.clearRect(0,0,PW,PH);
-  c.strokeStyle='#1a2030'; c.lineWidth=1;
+  // Background
+  c.fillStyle = whiteBg ? '#ffffff' : '#0d1117';
+  c.fillRect(0,0,PW,PH);
+  // Grid
+  c.strokeStyle = whiteBg ? '#e8e8e8' : '#1a2030'; c.lineWidth=1;
   for(let x=0;x<PW;x+=30){c.beginPath();c.moveTo(x,0);c.lineTo(x,PH);c.stroke();}
   for(let y=0;y<PH;y+=30){c.beginPath();c.moveTo(0,y);c.lineTo(PW,y);c.stroke();}
   const cpX=CX+R*Math.cos(a), cpY=CY+R*Math.sin(a), dy=cpY-CY;
-  const pX=cpX+Math.sqrt(L*L-dy*dy), pY=CY;
-  c.fillStyle='#0d1520'; c.fillRect(CL,CT+4,CR-CL, CB-CT-8);
-  c.fillStyle='#1e2d3d'; c.fillRect(CL,CT-14,CR-CL+12,14); c.fillRect(CL,CB,CR-CL+12,14); c.fillRect(CR,CT-14,14,CB-CT+28);
-  c.strokeStyle='#2e4055'; c.lineWidth=1;
+  const pX=cpX+Math.sqrt(Math.max(0, L*L-dy*dy)), pY=CY;
+  // Cylinder
+  c.fillStyle = whiteBg ? '#f4f4f4' : '#0d1520'; c.fillRect(CL,CT+4,CR-CL,CB-CT-8);
+  c.fillStyle = whiteBg ? '#d0d5db' : '#1e2d3d'; 
+  c.fillRect(CL,CT-14,CR-CL+12,14); c.fillRect(CL,CB,CR-CL+12,14); c.fillRect(CR,CT-14,14,CB-CT+28);
+  c.strokeStyle = whiteBg ? '#b0b5bb' : '#2e4055'; c.lineWidth=1;
   for(let i=0;i<=28;i++){c.beginPath();c.moveTo(CL+i*14,CT-1);c.lineTo(CL+i*14-10,CT-12);c.stroke();}
   for(let i=0;i<=28;i++){c.beginPath();c.moveTo(CL+i*14,CB+1);c.lineTo(CL+i*14-10,CB+12);c.stroke();}
-  c.beginPath();c.moveTo(CL,CT);c.lineTo(CR+14,CT);c.strokeStyle='#6a8aa0';c.lineWidth=3;c.stroke();
-  c.beginPath();c.moveTo(CL,CB);c.lineTo(CR+14,CB);c.strokeStyle='#6a8aa0';c.lineWidth=3;c.stroke();
-  c.beginPath();c.moveTo(CR,CT-14);c.lineTo(CR,CB+14);c.strokeStyle='#6a8aa0';c.lineWidth=4;c.stroke();
-  c.beginPath();c.arc(CX,CY,R,0,Math.PI*2);c.strokeStyle='#1e3a5f';c.lineWidth=1.5;c.setLineDash([4,4]);c.stroke();c.setLineDash([]);
-  c.beginPath();c.moveTo(cpX,cpY);c.lineTo(pX,pY);c.strokeStyle='#e8a020';c.lineWidth=5;c.lineCap='round';c.stroke();
-  c.beginPath();c.moveTo(CX,CY);c.lineTo(cpX,cpY);c.strokeStyle='#00aaff';c.lineWidth=7;c.lineCap='round';c.stroke();
-  c.fillStyle='#2a5080';c.strokeStyle='#4a9fdf';c.lineWidth=2;c.beginPath();c.roundRect(pX-PW2/2,pY-PH2/2,PW2,PH2,4);c.fill();c.stroke();
-  [-16,0,16].forEach(o=>{c.beginPath();c.moveTo(pX-PW2/2+3,pY+o);c.lineTo(pX+PW2/2-3,pY+o);c.strokeStyle='#1a3a5a';c.lineWidth=2.5;c.stroke();});
-  c.beginPath();c.arc(pX,pY,5,0,Math.PI*2);c.fillStyle='#aaa';c.fill();
-  c.beginPath();c.arc(CX,CY,11,0,Math.PI*2);c.fillStyle='#1a1a2e';c.fill();c.strokeStyle='#00aaff';c.lineWidth=2.5;c.stroke();
-  c.beginPath();c.arc(cpX,cpY,8,0,Math.PI*2);c.fillStyle='#e8a020';c.fill();c.strokeStyle='#fff4';c.lineWidth=1;c.stroke();
-  c.beginPath();c.moveTo(CX-25,CY);c.lineTo(CR+20,CY);c.strokeStyle='#2a3a4a';c.lineWidth=1;c.setLineDash([5,5]);c.stroke();c.setLineDash([]);
-  c.font='bold 11px Arial';c.fillStyle='#00aaff';c.fillText('Crank',CX-20,CY+28);c.fillStyle='#e8a020';c.fillText('Con. Rod',(cpX+pX)/2-26,(cpY+pY)/2-10);c.fillStyle='#7ab8e8';c.fillText('Piston',pX-14,CB+28);c.fillStyle='#6a8aa0';c.fillText('Cylinder',CL+8,CT-18);
+  c.strokeStyle = whiteBg ? '#555' : '#6a8aa0'; c.lineWidth=3;
+  c.beginPath();c.moveTo(CL,CT);c.lineTo(CR+14,CT);c.stroke();
+  c.beginPath();c.moveTo(CL,CB);c.lineTo(CR+14,CB);c.stroke();
+  c.beginPath();c.moveTo(CR,CT-14);c.lineTo(CR,CB+14);c.stroke();
+  // Crank guide
+  c.beginPath();c.arc(CX,CY,R,0,Math.PI*2);c.strokeStyle= whiteBg ? '#ccc' : '#1e3a5f';c.lineWidth=1.5;c.setLineDash([4,4]);c.stroke();c.setLineDash([]);
+  // Rods
+  c.lineCap='round';
+  c.beginPath();c.moveTo(cpX,cpY);c.lineTo(pX,pY);c.strokeStyle= whiteBg ? '#d48c00' : '#e8a020';c.lineWidth=5;c.stroke();
+  c.beginPath();c.moveTo(CX,CY);c.lineTo(cpX,cpY);c.strokeStyle= whiteBg ? '#0066aa' : '#00aaff';c.lineWidth=7;c.stroke();
+  // Piston
+  c.fillStyle= whiteBg ? '#2a5080' : '#2a5080'; c.strokeStyle= whiteBg ? '#1a3050' : '#4a9fdf'; c.lineWidth=2;
+  c.beginPath();c.roundRect(pX-PW2/2,pY-PH2/2,PW2,PH2,4);c.fill();c.stroke();
+  [-16,0,16].forEach(o=>{c.beginPath();c.moveTo(pX-PW2/2+3,pY+o);c.lineTo(pX+PW2/2-3,pY+o);c.strokeStyle= whiteBg ? '#1a3050' : '#1a3a5a';c.lineWidth=2.5;c.stroke();});
+  c.beginPath();c.arc(pX,pY,5,0,Math.PI*2);c.fillStyle= whiteBg ? '#666' : '#aaa';c.fill();
+  // Pins
+  c.beginPath();c.arc(CX,CY,11,0,Math.PI*2);c.fillStyle= whiteBg ? '#e0e0e0' : '#1a1a2e';c.fill();c.strokeStyle= whiteBg ? '#0066aa' : '#00aaff';c.lineWidth=2.5;c.stroke();
+  c.beginPath();c.arc(cpX,cpY,8,0,Math.PI*2);c.fillStyle= whiteBg ? '#d48c00' : '#e8a020';c.fill();c.strokeStyle= whiteBg ? '#fff' : '#fff4';c.lineWidth=1;c.stroke();
+  // Axis
+  c.beginPath();c.moveTo(CX-25,CY);c.lineTo(CR+20,CY);c.strokeStyle= whiteBg ? '#aaa' : '#2a3a4a';c.lineWidth=1;c.setLineDash([5,5]);c.stroke();c.setLineDash([]);
+  // Labels
+  c.font='bold 11px Arial';
+  c.fillStyle= whiteBg ? '#333' : '#00aaff'; c.fillText('Crank',CX-20,CY+28);
+  c.fillStyle= whiteBg ? '#885500' : '#e8a020'; c.fillText('Con. Rod',(cpX+pX)/2-26,(cpY+pY)/2-10);
+  c.fillStyle= whiteBg ? '#004488' : '#7ab8e8'; c.fillText('Piston',pX-14,CB+28);
+  c.fillStyle= whiteBg ? '#666' : '#6a8aa0'; c.fillText('Cylinder',CL+8,CT-18);
 }
 function updatePiston(){
   const deg=((pA*180/Math.PI)%360+360)%360, dy=R*Math.sin(pA);
-  const pX=CX+R*Math.cos(pA)+Math.sqrt(L*L-dy*dy), maxX=CX+R+L;
+  const pX=CX+R*Math.cos(pA)+Math.sqrt(Math.max(0, L*L-dy*dy)), maxX=CX+R+L;
   document.getElementById('pAngle').textContent=deg.toFixed(0)+'°';
   document.getElementById('pStroke').textContent=(maxX-pX).toFixed(0)+' px';
   document.getElementById('pPos').textContent=deg<10||deg>350?'TDC':deg>170&&deg<190?'BDC':deg<180?'Power ↓':'Return ↑';
 }
-function runPiston(){pA+=0.01*pS; drawPiston(pctx,pA); updatePiston(); pId=requestAnimationFrame(runPiston);}
+function runPiston(){pA+=0.01*pS*pDir; drawPiston(pctx,pA); updatePiston(); pId=requestAnimationFrame(runPiston);}
 runPiston();
 function downloadPiston(){
   const off=document.createElement('canvas'); off.width=PW*DQ; off.height=PH*DQ;
   const c=off.getContext('2d'); c.scale(DQ,DQ);
-  c.fillStyle='#0d1117'; c.fillRect(0,0,PW,PH); drawPiston(c,pA);
-  c.font='bold 12px Arial'; c.fillStyle='#00aaff'; c.globalAlpha=0.5;
-  c.fillText('⚙️ Piston–Crank · [yourusername].github.io', 14, PH-12);
-  const a=document.createElement('a'); a.download='piston-crank-HD.png'; a.href=off.toDataURL(); a.click();
+  drawPiston(c,pA,true);
+  c.font='bold 12px Arial'; c.fillStyle='#222222'; c.globalAlpha=0.7;
+  c.fillText('⚙️ Piston–Crank · engg-diagrams.github.io', 16, PH-14);
+  const a=document.createElement('a'); a.download='piston-crank-HD.png'; a.href=off.toDataURL('image/png'); a.click();
 }
 
-/* === 4-BAR LINKAGE === */
+/* === 4-BAR LINKAGE (RIGID LINKS) === */
 const fb=document.getElementById('fourbarCanvas'), fctx=fb.getContext('2d');
 fb.width=PW*DS; fb.height=PH*DS; fctx.scale(DS,DS);
-let fA=0, fS=3, fRun=true, fId, fTrace=[];
-const G=160, C1=80, C2=120, C3=100; // Ground, Crank, Coupler, Follower
+let fA=0, fS=3, fDir=1, fRun=true, fId, fTrace=[];
+const G=160, a=60, b=140, c=100; // Ground, Crank, Coupler, Follower
 const O1={x:180,y:200}, O2={x:O1.x+G,y:200};
 
 function toggleFourbar(){fRun=!fRun; document.getElementById('fourbarPlayBtn').textContent=fRun?'⏸ Pause':'▶ Play'; fRun?runFourbar():cancelAnimationFrame(fId);}
+function toggleFourbarDir(){fDir*=-1; document.getElementById('fourbarDirBtn').textContent=fDir===1?'🔄 CW':'🔄 CCW';}
 function setFourbarSpeed(v){fS=+v; document.getElementById('fourbarSpeedLbl').textContent=v+'x';}
-function solveFourbar(t){
-  const k1=G/C1, k2=G/C3, k3=(C1*C1-C2*C2+C3*C3+G*G)/(2*C2*C3);
-  const k4=G/C2, k5=(C3*C3-C2*C2-G*G-C1*C1)/(2*C1*C2);
-  const A=Math.cos(t)-k1+k4*Math.cos(t)+k5;
-  const B=-2*Math.sin(t);
-  const C=k1+(k4-1)*Math.cos(t)+k3;
-  const phi=2*Math.atan2(-B+Math.sqrt(B*B-4*A*C), 2*A);
-  const beta=Math.atan2(C2*Math.sin(phi+Math.atan2(C3*Math.sin(phi),C3*Math.cos(phi)+C1*Math.cos(t)-C2)), C1*Math.sin(t));
-  return {phi, beta};
+
+function solveFourbar(theta2){
+  const Ax = O1.x + a * Math.cos(theta2);
+  const Ay = O1.y + a * Math.sin(theta2);
+  const dx = Ax - O2.x, dy = Ay - O2.y;
+  const d = Math.sqrt(dx*dx + dy*dy);
+  const alpha = Math.atan2(dy, dx);
+  const cosBeta = Math.max(-1, Math.min(1, (b*b + d*d - c*c)/(2*b*d)));
+  const beta = Math.acos(cosBeta);
+  const theta3 = alpha - beta;
+  const Bx = Ax + b * Math.cos(theta3);
+  const By = Ay + b * Math.sin(theta3);
+  const theta4 = Math.atan2(By - O2.y, Bx - O2.x);
+  return {A:{x:Ax,y:Ay}, B:{x:Bx,y:By}, theta3, theta4, d};
 }
-function drawFourbar(c,a){
+
+function drawFourbar(c,a,whiteBg=false){
   c.clearRect(0,0,PW,PH);
-  c.strokeStyle='#1a2030'; c.lineWidth=1;
+  c.fillStyle = whiteBg ? '#ffffff' : '#0d1117'; c.fillRect(0,0,PW,PH);
+  c.strokeStyle = whiteBg ? '#e8e8e8' : '#1a2030'; c.lineWidth=1;
   for(let x=0;x<PW;x+=30){c.beginPath();c.moveTo(x,0);c.lineTo(x,PH);c.stroke();}
   for(let y=0;y<PH;y+=30){c.beginPath();c.moveTo(0,y);c.lineTo(PW,y);c.stroke();}
-  const sol=solveFourbar(a);
-  const A={x:O1.x+C1*Math.cos(a), y:O1.y+C1*Math.sin(a)};
-  const B={x:O2.x+C3*Math.cos(sol.phi), y:O2.y+C3*Math.sin(sol.phi)};
-  const M={x:(A.x+B.x)/2, y:(A.y+B.y)/2};
-  fTrace.push({x:M.x,y:M.y}); if(fTrace.length>300) fTrace.shift();
+  
+  const sol = solveFourbar(a);
+  const M = {x:(sol.A.x+sol.B.x)/2, y:(sol.A.y+sol.B.y)/2};
+  fTrace.push({x:M.x,y:M.y}); if(fTrace.length>400) fTrace.shift();
   
   // Ground
-  c.beginPath();c.moveTo(O1.x,O1.y);c.lineTo(O2.x,O2.y);c.strokeStyle='#6a8aa0';c.lineWidth=6;c.stroke();
-  c.beginPath();c.arc(O1.x,O1.y,8,0,Math.PI*2);c.fillStyle='#aaa';c.fill();
-  c.beginPath();c.arc(O2.x,O2.y,8,0,Math.PI*2);c.fillStyle='#aaa';c.fill();
+  c.beginPath();c.moveTo(O1.x,O1.y);c.lineTo(O2.x,O2.y);c.strokeStyle= whiteBg ? '#555' : '#6a8aa0';c.lineWidth=6;c.stroke();
+  c.beginPath();c.arc(O1.x,O1.y,8,0,Math.PI*2);c.fillStyle= whiteBg ? '#888' : '#aaa';c.fill();
+  c.beginPath();c.arc(O2.x,O2.y,8,0,Math.PI*2);c.fillStyle= whiteBg ? '#888' : '#aaa';c.fill();
   
   // Trace
-  if(fTrace.length>1){c.beginPath();c.moveTo(fTrace[0].x,fTrace[0].y); for(let i=1;i<fTrace.length;i++) c.lineTo(fTrace[i].x,fTrace[i].y); c.strokeStyle='#ff5577';c.lineWidth=1.5;c.stroke();}
+  if(fTrace.length>1){
+    c.beginPath();c.moveTo(fTrace[0].x,fTrace[0].y);
+    for(let i=1;i<fTrace.length;i++) c.lineTo(fTrace[i].x,fTrace[i].y);
+    c.strokeStyle= whiteBg ? '#d63355' : '#ff5577';c.lineWidth=1.5;c.stroke();
+  }
   
-  // Links
-  c.beginPath();c.moveTo(O1.x,O1.y);c.lineTo(A.x,A.y);c.strokeStyle='#00aaff';c.lineWidth=6;c.lineCap='round';c.stroke();
-  c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.strokeStyle='#e8a020';c.lineWidth=6;c.stroke();
-  c.beginPath();c.moveTo(B.x,B.y);c.lineTo(O2.x,O2.y);c.strokeStyle='#4caf50';c.lineWidth=6;c.stroke();
+  // Links (RIGID)
+  c.lineCap='round';
+  c.beginPath();c.moveTo(O1.x,O1.y);c.lineTo(sol.A.x,sol.A.y);c.strokeStyle= whiteBg ? '#0066aa' : '#00aaff';c.lineWidth=6;c.stroke();
+  c.beginPath();c.moveTo(sol.A.x,sol.A.y);c.lineTo(sol.B.x,sol.B.y);c.strokeStyle= whiteBg ? '#b37700' : '#e8a020';c.lineWidth=6;c.stroke();
+  c.beginPath();c.moveTo(sol.B.x,sol.B.y);c.lineTo(O2.x,O2.y);c.strokeStyle= whiteBg ? '#3a8a3a' : '#4caf50';c.lineWidth=6;c.stroke();
   
   // Joints
-  c.beginPath();c.arc(A.x,A.y,5,0,Math.PI*2);c.fillStyle='#fff';c.fill();
-  c.beginPath();c.arc(B.x,B.y,5,0,Math.PI*2);c.fillStyle='#fff';c.fill();
-  c.beginPath();c.arc(M.x,M.y,4,0,Math.PI*2);c.fillStyle='#ff5577';c.fill();
+  c.beginPath();c.arc(sol.A.x,sol.A.y,5,0,Math.PI*2);c.fillStyle='#fff';c.fill();
+  c.beginPath();c.arc(sol.B.x,sol.B.y,5,0,Math.PI*2);c.fillStyle='#fff';c.fill();
+  c.beginPath();c.arc(M.x,M.y,4,0,Math.PI*2);c.fillStyle= whiteBg ? '#d63355' : '#ff5577';c.fill();
   
   // Labels
-  c.font='bold 11px Arial';c.fillStyle='#00aaff';c.fillText('Crank',(O1.x+A.x)/2-12,(O1.y+A.y)/2-8);
-  c.fillStyle='#e8a020';c.fillText('Coupler',(A.x+B.x)/2-18,(A.y+B.y)/2-8);
-  c.fillStyle='#4caf50';c.fillText('Rocker',(B.x+O2.x)/2-12,(B.y+O2.y)/2+18);
-  c.fillStyle='#ff5577';c.fillText('Trace',M.x+8,M.y-8);
+  c.font='bold 11px Arial';
+  c.fillStyle= whiteBg ? '#333' : '#00aaff'; c.fillText('Crank',(O1.x+sol.A.x)/2-16,(O1.y+sol.A.y)/2-8);
+  c.fillStyle= whiteBg ? '#885500' : '#e8a020'; c.fillText('Coupler',(sol.A.x+sol.B.x)/2-22,(sol.A.y+sol.B.y)/2-8);
+  c.fillStyle= whiteBg ? '#2a7a2a' : '#4caf50'; c.fillText('Rocker',(sol.B.x+O2.x)/2-12,(sol.B.y+O2.y)/2+18);
+  c.fillStyle= whiteBg ? '#b02040' : '#ff5577'; c.fillText('Trace',M.x+8,M.y-8);
   
+  // Telemetry
   document.getElementById('fTheta').textContent=((a*180/Math.PI)%360).toFixed(0)+'°';
-  document.getElementById('fPhi').textContent=((sol.phi*180/Math.PI)%360).toFixed(0)+'°';
-  document.getElementById('fBeta').textContent=((Math.atan2(B.y-A.y,B.x-A.x)*180/Math.PI)%360).toFixed(0)+'°';
+  document.getElementById('fPhi').textContent=((sol.theta4*180/Math.PI)%360).toFixed(0)+'°';
+  document.getElementById('fBeta').textContent=((sol.theta3*180/Math.PI)%360).toFixed(0)+'°';
   document.getElementById('fType').textContent='Grashof';
 }
-function runFourbar(){fA+=0.01*fS; drawFourbar(fctx,fA); fId=requestAnimationFrame(runFourbar);}
+function runFourbar(){fA+=0.01*fS*fDir; drawFourbar(fctx,fA); fId=requestAnimationFrame(runFourbar);}
 runFourbar();
 function downloadFourbar(){
   const off=document.createElement('canvas'); off.width=PW*DQ; off.height=PH*DQ;
   const c=off.getContext('2d'); c.scale(DQ,DQ);
-  c.fillStyle='#0d1117'; c.fillRect(0,0,PW,PH); drawFourbar(c,fA);
-  c.font='bold 12px Arial'; c.fillStyle='#00aaff'; c.globalAlpha=0.5;
-  c.fillText('⚙️ 4-Bar Linkage · [yourusername].github.io', 14, PH-12);
-  const a=document.createElement('a'); a.download='fourbar-HD.png'; a.href=off.toDataURL(); a.click();
+  drawFourbar(c,fA,true);
+  c.font='bold 12px Arial'; c.fillStyle='#222222'; c.globalAlpha=0.7;
+  c.fillText('⚙️ 4-Bar Linkage · engg-diagrams.github.io', 16, PH-14);
+  const a=document.createElement('a'); a.download='fourbar-HD.png'; a.href=off.toDataURL('image/png'); a.click();
 }
 </script>
 </body>
